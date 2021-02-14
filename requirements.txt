@@ -1,0 +1,10 @@
+bcbio-gff
+cdna_cupcake
+colorlover
+cufflinks
+minimap2
+numpy
+plotly
+pysam
+samtools
+seqkit
