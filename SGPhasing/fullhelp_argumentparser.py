@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 Shang Xie.
+# Copyright 2021 Shang Xie.
 # All rights reserved.
 #
 # This file is part of the SGPhasing distribution and
@@ -41,6 +41,7 @@ Parse the sub-command line arguments.
 
 Classes:
   - IndexArgs
+  - PhasingArgs
 """
 
 from argparse import ArgumentParser, HelpFormatter
@@ -59,7 +60,7 @@ logger = getLogger(__name__)  # pylint: disable=invalid-name
 class ScriptExecutor(object):
     """Loads the relevant script modules and executes the script.
 
-    This class is initialised in each of the argparsers for the relevant
+    This class is initialized in each of the argparsers for the relevant
     command, then execute script is called within their set_default function.
 
     Attributes:
@@ -106,8 +107,8 @@ class ScriptExecutor(object):
             logger.critical(
                 'An unexpected crash has occurred. '
                 'Crash report written to logfile. '
-                'Please verify you are running the latest version of SGPhasing '
-                'before reporting.')
+                'Please verify you are running the latest '
+                'version of SGPhasing before reporting.')
         finally:
             exit()
 
@@ -255,6 +256,28 @@ class SGPhasingArgs(object):
 
 
 class IndexArgs(SGPhasingArgs):
+    """."""
+
+    @staticmethod
+    def get_argument_list() -> list:
+        """Put the arguments in a list so that they are accessible."""
+        argument_list = []
+        argument_list.append({
+            'opts': ('-i', '--input'),
+            'dest': 'input',
+            'required': True,
+            'type': str,
+            'help': 'Input a HiFi full-length transcriptome bam file.'})
+        argument_list.append({
+            'opts': ('-r', '--reference'),
+            'dest': 'ref',
+            'required': True,
+            'type': str,
+            'help': 'Input reference fasta file.'})
+        return argument_list
+
+
+class PhasingArgs(SGPhasingArgs):
     """."""
 
     @staticmethod

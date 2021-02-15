@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 Shang Xie.
+# Copyright 2021 Shang Xie.
 # All rights reserved.
 #
 # This file is part of the SGPhasing distribution and
@@ -32,12 +32,12 @@ from SGPhasing import fullhelp_argumentparser
 from SGPhasing.sys_output import Output
 
 # version control
-if version_info[0] == 3 and version_info[1] == 6:
+if version_info[0] == 3 and version_info[1] in (6, 7, 8, 9):
     pass
 else:
     output = Output()
-    output.error('Please run this script with '
-                 'Python version 3.6 and try again.')
+    output.error('Please run this script with Python version '
+                 '3.6, 3.7, 3.8 or 3.9 and try again.')
     exit()
 
 
@@ -48,6 +48,10 @@ def main() -> None:
     INDEX = fullhelp_argumentparser.IndexArgs(
         SUBPARSER,
         'index',
+        """.""")
+    PHASING = fullhelp_argumentparser.PhasingArgs(
+        SUBPARSER,
+        'phasing',
         """.""")
 
     def bad_args(args) -> None:

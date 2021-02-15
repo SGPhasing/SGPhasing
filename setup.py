@@ -63,7 +63,6 @@ class Environment(object):
         self.conda_required_packages = [('bcbio-gff', 'bioconda'),
                                         ('cdna_cupcake', 'bioconda'),
                                         ('colorlover', 'plotly'),
-                                        ('cufflinks', 'bioconda'),
                                         ('minimap2', 'bioconda'),
                                         ('numpy',),
                                         ('plotly', 'plotly'),
@@ -154,9 +153,9 @@ class Environment(object):
         self.output.info(
             f'Installed Python: {self.py_version[0]} {self.py_version[1]}')
         if not (self.py_version[0].split('.')[0] == '3' and
-                self.py_version[0].split('.')[1] == '6'):
+                self.py_version[0].split('.')[1] in ('6', '7', '8', '9')):
             self.output.error('Please run this script with Python version '
-                              '3.6 and try again.')
+                              '3.6, 3.7, 3.8 or 3.9 and try again.')
             sys.exit(1)
 
     def output_runtime_info(self) -> None:
