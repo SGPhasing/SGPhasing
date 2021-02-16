@@ -41,7 +41,7 @@ Parse the sub-command line arguments.
 
 Classes:
   - IndexArgs
-  - PhasingArgs
+  - PhaseArgs
 """
 
 from argparse import ArgumentParser, HelpFormatter
@@ -67,15 +67,14 @@ class ScriptExecutor(object):
       - command (str): Full commands.
       - subparsers: Subparsers for each subcommand.
       - output: Output info, warning and error.
-
     """
 
     def __init__(self, command: str, subparsers=None) -> None:
         """Initialize ScriptExecutor.
+
         Args:
           - command (str): Full commands.
           - subparsers: Subparsers for each subcommand.
-
         """
         self.command = command.lower()
         self.subparsers = subparsers
@@ -83,7 +82,6 @@ class ScriptExecutor(object):
 
     def import_script(self):
         """Only import a script's modules when running that script."""
-        # cmd = os.path.basename(sys.argv[0])
         src = 'SGPhasing'
         mod = '.'.join((src, self.command.lower()))
         module = import_module(mod)
@@ -149,7 +147,6 @@ class SmartFormatter(HelpFormatter):
           - indent_increment (int): Indent increment. default 2.
           - max_help_position (int): Max help position. default 24.
           - width: Width.
-
         """
         super().__init__(prog, indent_increment, max_help_position, width)
         self._whitespace_matcher_limited = compile(r'[ \r\f\v]+', ASCII)
@@ -180,7 +177,6 @@ class SGPhasingArgs(object):
       - argument_list: Argument list.
       - optional_arguments: Optional arguments.
       - parser: Parser.
-
     """
 
     def __init__(self, subparser, command: str,
@@ -192,7 +188,6 @@ class SGPhasingArgs(object):
           - command (str): Command.
           - description (str): Description. default 'default'.
           - subparsers: Subparsers.
-
         """
         self.global_arguments = self.get_global_arguments()
         self.argument_list = self.get_argument_list()
@@ -267,17 +262,40 @@ class IndexArgs(SGPhasingArgs):
             'dest': 'input',
             'required': True,
             'type': str,
-            'help': 'Input a HiFi full-length transcriptome bam file.'})
+            'help': 'Input a HiFi full-length '
+                    'transcriptome sam/bam/cram file.'})
         argument_list.append({
             'opts': ('-r', '--reference'),
             'dest': 'ref',
             'required': True,
             'type': str,
             'help': 'Input reference fasta file.'})
+        argument_list.append({
+            'opts': ('-b', '--bed'),
+            'dest': 'bed',
+            'required': False,
+            'default': '',
+            'type': str,
+            'help': 'Input a limitation region bed file for phasing.'})
+        argument_list.append({
+            'opts': ('-t', '--threads'),
+            # 'action': 'store',
+            'dest': 'threads',
+            'required': False,
+            'type': int,
+            'default': 4,
+            'help': 'Number of additional threads to use [default=4].'})
+        argument_list.append({
+            'opts': ('--tmp',),
+            'dest': 'tmp',
+            'required': False,
+            'default': '',
+            'type': str,
+            'help': 'Temporary folder [default=input.sgphasing.tmp].'})
         return argument_list
 
 
-class PhasingArgs(SGPhasingArgs):
+class PhaseArgs(SGPhasingArgs):
     """."""
 
     @staticmethod

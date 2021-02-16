@@ -48,10 +48,11 @@ def main() -> None:
     INDEX = fullhelp_argumentparser.IndexArgs(
         SUBPARSER,
         'index',
-        """.""")
-    PHASING = fullhelp_argumentparser.PhasingArgs(
+        """Indexing with high quality full-length
+            transcriptome sequences allele.""")
+    PHASE = fullhelp_argumentparser.PhaseArgs(
         SUBPARSER,
-        'phasing',
+        'phase',
         """.""")
 
     def bad_args(args) -> None:

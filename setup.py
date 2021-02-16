@@ -63,6 +63,7 @@ class Environment(object):
         self.conda_required_packages = [('bcbio-gff', 'bioconda'),
                                         ('cdna_cupcake', 'bioconda'),
                                         ('colorlover', 'plotly'),
+                                        ('mappy', 'bioconda'),
                                         ('minimap2', 'bioconda'),
                                         ('numpy',),
                                         ('plotly', 'plotly'),

@@ -1,6 +1,7 @@
 bcbio-gff
 cdna_cupcake
 colorlover
+mappy
 minimap2
 numpy
 plotly
