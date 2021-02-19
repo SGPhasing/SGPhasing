@@ -27,4 +27,51 @@ def open_bed(input_bed: str) -> dict:
                 # chrom chromStart chromEnd name score strand
                 chr_region.setdefault(sp[0], []).append(
                     (int(sp[1]), int(sp[2])))
-    return chr_region
+    return merge_region(chr_region)
+
+
+def merge_region(chr_region: dict) -> dict:
+    """Merge overlap regions.
+
+    Args:
+        chr_region (dict): chrom as key and region list as value.
+
+    Returns:
+        chr_region (dict): chrom as key and region list as value.
+    """
+    return {chrom: fold_region(unfold_region(region_list))
+            for chrom, region_list in chr_region.items()}
+
+
+def unfold_region(region_list: list) -> set:
+    """Turn region_list into position_set.
+
+    Args:
+        region_list (list): the elements are (start, end) tuple.
+
+    Returns:
+        position_set (set): set of positions.
+    """
+    position_set = set()
+    for region_start, region_end in region_list:
+        position_set |= set(range(region_start, region_end))
+    return position_set
+
+
+def fold_region(position_set: set) -> list:
+    """Turn position_set into region_list.
+
+    Args:
+        position_set (set): set of positions.
+
+    Returns:
+        region_list (list): the elements are (start, end) tuple.
+    """
+    region_list = []
+    sorted_pos = sorted(position_set)
+    start = 0
+    for pos_id in range(1, len(sorted_pos)):
+        if sorted_pos[pos_id] - sorted_pos[pos_id-1] != 1:
+            region_list.append((start, sorted_pos[pos_id-1]))
+            start = sorted_pos[pos_id]
+    return region_list

@@ -9,9 +9,25 @@
 # have been included as part of this package.
 """SGPhasing.reader read fasta file."""
 
+from pathlib import Path
+
 import mappy as mp
+
+from SGPhasing.sys_output import Output
 
 
 def check_index(input_ref: str, threads: int = 1) -> None:
-    opened_aligner = mp.Aligner(input_ref, preset='splice', k=17, best_n=100,
-                                n_threads=threads, fn_idx_out=input_ref+'.mmi')
+    """Build index for minimap2 if not exists.
+
+    Args:
+        input_ref (str): input reference fasta file path.
+        threads (int): threads using for mappy to index.
+    """
+    index_file = input_ref + '.mmi'
+    index_path = Path(index_file)
+    if not index_path.exists():
+        output = Output()
+        output.info('preparing genome index for minimap2.')
+        opened_aligner = mp.Aligner(input_ref, preset='splice',
+                                    k=17, best_n=100,
+                                    n_threads=threads, fn_idx_out=index_file)

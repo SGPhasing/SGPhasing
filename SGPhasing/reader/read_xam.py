@@ -54,8 +54,12 @@ def check_index(input_xam: str, threads: int = 1) -> None:
     try:
         xamfile.check_index()
     except ValueError:
-        pysam.index(input_xam, '-m 17')
+        output = Output()
+        output.info(f'preparing samtools index for input {input_xam}.')
+        pysam.index(input_xam, '-m', '17', '-@', str(threads))
     except AttributeError:
+        output = Output()
+        output.info(f'preparing samtools index for input {input_xam}.')
         if input_format == 'sam':
             input_cram = input_xam[:-3] + 'cram'
             pysam.sort('-o', input_cram, '--output-fmt', 'CRAM',

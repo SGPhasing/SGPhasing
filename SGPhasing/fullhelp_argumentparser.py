@@ -283,8 +283,8 @@ class IndexArgs(SGPhasingArgs):
             'dest': 'threads',
             'required': False,
             'type': int,
-            'default': 4,
-            'help': 'Number of additional threads to use [default=4].'})
+            'default': 1,
+            'help': 'Number of additional threads to use [default=1].'})
         argument_list.append({
             'opts': ('--tmp',),
             'dest': 'tmp',

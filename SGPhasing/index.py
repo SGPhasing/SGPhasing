@@ -18,6 +18,7 @@ Classes:
   - Index
 """
 
+from gc import collect
 from logging import getLogger
 from pathlib import Path
 # from subprocess import Popen
@@ -44,6 +45,8 @@ class Index(object):
         """
         self.args = arguments
         self.output = Output()
+        if not self.args.tmp:
+            self.args.tmp = self.args.input + '.sgphasing.tmp'
         self.output.info(
             f'Initializing {self.__class__.__name__}: (args: {arguments}')
         logger.debug(
@@ -51,18 +54,11 @@ class Index(object):
 
     def prepare(self) -> None:
         """Check genome index."""
-        if not self.args.tmp:
-            self.args.tmp = self.args.input + '.sgphasing.tmp'
         self.tmp_floder = Path(self.args.tmp)
         if not self.tmp_floder.is_dir():
             self.tmp_floder.mkdir()
             self.output.info(f'creating temporary folder at {self.args.tmp}.')
-        # minimap2_index = Path(self.args.ref + '.mmi')
-        # if not minimap2_index.exists():
-        #     with Popen(['minimap2', '-k', '17', '-I', '18G', '-x', 'splice',
-        #                 '-d', f'{self.args.ref}.mmi', self.args.ref]):
         read_fasta.check_index(self.args.ref, self.args.threads)
-        self.output.info('preparing genome index for minimap2.')
         read_xam.check_index(self.args.input)
 
     def check_bed(self) -> None:
@@ -87,17 +83,22 @@ class Index(object):
                         region_reads_set.add(read.query_name)
             self.multimapped_reads_set &= region_reads_set
             del region_reads_set
+            collect()
 
     def get_primary_region(self) -> None:
         """Get primary region from multiply mapped reads."""
+        chr_region = {}
         if self.limit_region:
             for chrom, region_list in self.limit_region.items():
                 for start, end in region_list:
                     for read in self.opened_xam.fetch(chrom, start, end):
                         if read.query_name in self.multimapped_reads_set:
                             if not read.is_secondary:
-                                read.reference_start, read.reference_end
-
+                                chr_region.setdefault(chrom, []).append(
+                                    (read.reference_start, read.reference_end))
+        self.primary_region = read_bed.merge_region(chr_region)
+        del chr_region
+        collect()
 
     def process(self) -> None:
         """Call the index object."""
@@ -105,4 +106,5 @@ class Index(object):
         self.prepare()
         self.check_bed()
         self.get_multimapped_reads()
+        self.get_primary_region()
         logger.debug('Completed index Process')
