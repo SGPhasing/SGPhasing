@@ -1,7 +1,7 @@
 SGPhasing
 =========
 
-.. image:: https://github.com/SGPhasing/SGPhasing/raw/master/Doc/images/sgphasing_logo.svg
+.. image:: https://github.com/SGPhasing/SGPhasing/blob/main/Doc/images/sgphasing_logo.svg
 
 .. image:: https://img.shields.io/badge/language-python-blue.svg
 .. image:: https://img.shields.io/badge/version-v0.0.1a-green.svg
