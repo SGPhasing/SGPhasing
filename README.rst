@@ -1,9 +1,11 @@
 SGPhasing
 =========
 
+.. image:: https://github.com/SGPhasing/SGPhasing/raw/master/Doc/images/sgphasing_logo.svg
+
 .. image:: https://img.shields.io/badge/language-python-blue.svg
 .. image:: https://img.shields.io/badge/version-v0.0.1a-green.svg
-.. image:: https://img.shields.io/badge/last%20updated-16%20Feb%202021-orange.svg
+.. image:: https://img.shields.io/badge/last%20updated-19%20Feb%202021-orange.svg
 
 Table of contents
 -----------------
@@ -21,6 +23,13 @@ Requirements
 
 Install
 ~~~~~~~
+
+.. code-block:: shell
+
+    git clone https://github.com/SGPhasing/SGPhasing.git
+    cd SGPhasing
+    conda create -n sgphasing -y --no-default-packages python=3.8
+    python setup.py
 
 Usage
 -----
