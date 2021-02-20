@@ -14,7 +14,7 @@ def open_bed(input_bed: str) -> dict:
     """Read bed file.
 
     Args:
-        input_bed (str): input bed file path.
+        input_bed (str): input bed file path str.
 
     Returns:
         chr_region (dict): chrom as key and region list as value.
@@ -69,9 +69,10 @@ def fold_region(position_set: set) -> list:
     """
     region_list = []
     sorted_pos = sorted(position_set)
-    start = 0
+    start = sorted_pos[0]
     for pos_id in range(1, len(sorted_pos)):
         if sorted_pos[pos_id] - sorted_pos[pos_id-1] != 1:
             region_list.append((start, sorted_pos[pos_id-1]))
             start = sorted_pos[pos_id]
+    region_list.append((start, sorted_pos[-1]))
     return region_list
