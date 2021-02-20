@@ -32,10 +32,10 @@ or contact Shang Xie and ask for help:
 """
 
 import ctypes
-import locale
+from locale import getpreferredencoding
 import os
 import platform
-import re
+from re import sub
 from subprocess import CalledProcessError, PIPE, Popen, run
 import sys
 
@@ -53,7 +53,6 @@ class Environment(object):
       - missing_packages (list): Missing packages from current environment.
       - conda_missing_packages (list): Missing packages from current
         conda environment.
-
     """
 
     def __init__(self) -> None:
@@ -62,14 +61,12 @@ class Environment(object):
         self.is_installer = False
         self.conda_required_packages = [('bcbio-gff', 'bioconda'),
                                         ('cdna_cupcake', 'bioconda'),
-                                        ('colorlover', 'plotly'),
+                                        ('gatk4', 'bioconda'),
                                         ('mappy', 'bioconda'),
                                         ('minimap2', 'bioconda'),
                                         ('numpy',),
-                                        ('plotly', 'plotly'),
                                         ('pysam', 'bioconda'),
-                                        ('samtools', 'bioconda'),
-                                        ('seqkit', 'bioconda')]
+                                        ('samtools', 'bioconda')]
         self.missing_packages = []
         self.conda_missing_packages = []
 
@@ -86,7 +83,11 @@ class Environment(object):
 
     @property
     def is_admin(self) -> bool:
-        """Check whether user is admin."""
+        """Check whether user is admin.
+
+        Returns:
+            retval (bool)
+        """
         try:
             retval = os.getuid() == 0
         except AttributeError:
@@ -105,12 +106,20 @@ class Environment(object):
 
     @property
     def is_conda(self) -> bool:
-        """Check whether using Conda."""
+        """Check whether using Conda.
+
+        Returns:
+            (bool)
+        """
         return bool('conda' in sys.version.lower())
 
     @property
     def is_virtualenv(self) -> bool:
-        """Check whether this is a virtual environment."""
+        """Check whether this is a virtual environment.
+
+        Returns:
+            retval (bool)
+        """
         if not self.is_conda:
             retval = (hasattr(sys, 'real_prefix') or
                       (hasattr(sys, 'base_prefix') and
@@ -123,7 +132,7 @@ class Environment(object):
     @property
     def encoding(self):
         """Get system encoding."""
-        return locale.getpreferredencoding()
+        return getpreferredencoding()
 
     def process_arguments(self) -> None:
         """Process any cli arguments."""
@@ -209,7 +218,7 @@ class Environment(object):
             return
         self.installed_conda_packages = {}
         chk = os.popen('conda list').read()
-        installed = [re.sub(' +', ' ', line.strip())
+        installed = [sub(' +', ' ', line.strip())
                      for line in chk.splitlines() if not line.startswith('#')]
         for pkg in installed:
             item = pkg.split(' ')
@@ -233,7 +242,6 @@ class Install(object):
     Attributes:
       - output: Output info, warning and error.
       - env: Environment.
-
     """
 
     def __init__(self, environment) -> None:
@@ -241,7 +249,6 @@ class Install(object):
 
         Args:
           - environment: Store an environment.
-
         """
         self.output = Output()
         self.env = environment
@@ -307,14 +314,18 @@ class Install(object):
         self.output.info(
             'Installing Required Conda Packages. This may take some time...')
         for pkg in self.env.conda_missing_packages:
-            channel = None if len(pkg) != 2 else pkg[1]
+            channel = '' if len(pkg) != 2 else pkg[1]
             self.conda_installer(pkg[0], channel=channel, conda_only=True)
 
     def conda_installer(self, package: str,
-                        channel: bool = None,
+                        channel: str = '',
                         verbose: bool = False,
                         conda_only: bool = False) -> bool:
-        """Install a conda package."""
+        """Install a conda package.
+
+        Returns:
+            success (bool)
+        """
         success = True
         condaexe = ['conda', 'install', '-y']
         if not verbose:

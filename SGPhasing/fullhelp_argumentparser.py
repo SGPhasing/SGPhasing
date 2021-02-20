@@ -265,6 +265,12 @@ class IndexArgs(SGPhasingArgs):
             'help': 'Input a HiFi full-length '
                     'transcriptome sam/bam/cram file.'})
         argument_list.append({
+            'opts': ('-f', '--fastx'),
+            'dest': 'fastx',
+            'required': True,
+            'type': str,
+            'help': 'Input a fasta/fastq file paired to sam/bam/cram file.'})
+        argument_list.append({
             'opts': ('-r', '--reference'),
             'dest': 'ref',
             'required': True,

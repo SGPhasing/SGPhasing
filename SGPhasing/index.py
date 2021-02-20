@@ -23,7 +23,9 @@ from logging import getLogger
 from pathlib import Path
 # from subprocess import Popen
 
-from SGPhasing.reader import read_bed, read_fasta, read_xam
+from SGPhasing.processor.collapse import collapse_isoforms_by_sam
+from SGPhasing.reader import read_bed, read_fastx, read_xam
+from SGPhasing.writer import write_fastx, write_xam
 from SGPhasing.sys_output import Output
 
 logger = getLogger(__name__)  # pylint: disable=invalid-name
@@ -54,19 +56,19 @@ class Index(object):
 
     def prepare(self) -> None:
         """Check genome index."""
-        self.tmp_floder = Path(self.args.tmp)
-        if not self.tmp_floder.is_dir():
-            self.tmp_floder.mkdir()
+        self.tmp_floder_path = Path(self.args.tmp)
+        if not self.tmp_floder_path.is_dir():
+            self.tmp_floder_path.mkdir()
             self.output.info(f'creating temporary folder at {self.args.tmp}.')
-        read_fasta.check_index(self.args.ref, self.args.threads)
-        read_xam.check_index(self.args.input)
+        read_fastx.check_index(self.args.ref, self.args.threads)
+        self.args.input = read_xam.check_index(self.args.input)
 
     def check_bed(self) -> None:
         """Check input limitation bed file."""
         if self.args.bed:
-            self.limit_region = read_bed.open_bed(self.args.bed)
+            self.limit_region_dict = read_bed.open_bed(self.args.bed)
         else:
-            self.limit_region = {}
+            self.limit_region_dict = {}
 
     def get_multimapped_reads(self) -> None:
         """Get multiply mapped reads from input bam."""
@@ -75,9 +77,9 @@ class Index(object):
         for read in self.opened_xam.fetch():
             if read.is_secondary:
                 self.multimapped_reads_set.add(read.query_name)
-        if self.limit_region:
+        if self.limit_region_dict:
             region_reads_set = set()
-            for chrom, region_list in self.limit_region.items():
+            for chrom, region_list in self.limit_region_dict.items():
                 for start, end in region_list:
                     for read in self.opened_xam.fetch(chrom, start, end):
                         region_reads_set.add(read.query_name)
@@ -87,18 +89,29 @@ class Index(object):
 
     def get_primary_region(self) -> None:
         """Get primary region from multiply mapped reads."""
-        chr_region = {}
-        if self.limit_region:
-            for chrom, region_list in self.limit_region.items():
-                for start, end in region_list:
-                    for read in self.opened_xam.fetch(chrom, start, end):
-                        if read.query_name in self.multimapped_reads_set:
-                            if not read.is_secondary:
-                                chr_region.setdefault(chrom, []).append(
-                                    (read.reference_start, read.reference_end))
-        self.primary_region = read_bed.merge_region(chr_region)
-        del chr_region
+        self.primary_sam_path = self.tmp_floder_path / 'primary_reference.sam'
+        (self.primary_region,
+            self.primary_reads_set) = write_xam.write_partial_sam(
+                self.opened_xam, str(self.primary_sam_path),
+                self.limit_region_dict, self.multimapped_reads_set)
+        del self.multimapped_reads_set
         collect()
+
+        self.opened_fastx, self.fastx_format = read_fastx.open_fastx(
+            self.args.fastx)
+        self.primary_fastx_path = (self.tmp_floder_path /
+                                   ('primary.' + self.fastx_format))
+        write_fastx.write_partial_fastx(
+            self.opened_fastx, self.primary_fastx_path.open('w'),
+            self.fastx_format, self.primary_reads_set)
+        self.opened_fastx.close()
+
+    def collapse_primary_sam(self):
+        self.primary_gff, self.primary_group = collapse_isoforms_by_sam(
+            str(self.primary_sam_path),
+            str(self.primary_fastx_path),
+            self.fastx_format == 'fastq',
+            self.tmp_floder_path)
 
     def process(self) -> None:
         """Call the index object."""
@@ -107,4 +120,5 @@ class Index(object):
         self.check_bed()
         self.get_multimapped_reads()
         self.get_primary_region()
+        self.collapse_primary_sam()
         logger.debug('Completed index Process')
