@@ -30,7 +30,6 @@ class Output():
       - yellow: Yellow color.
       - default_color: Default color.
       - term_support_color: Term support color.
-
     """
 
     def __init__(self) -> None:
