@@ -21,9 +21,9 @@ Classes:
 from gc import collect
 from logging import getLogger
 from pathlib import Path
-# from subprocess import Popen
 
 from SGPhasing.processor.collapse import collapse_isoforms_by_sam
+from SGPhasing.processor.gff_to_fasta import gff_to_fasta
 from SGPhasing.reader import read_bed, read_fastx, read_xam
 from SGPhasing.writer import write_fastx, write_gff, write_xam
 from SGPhasing.sys_output import Output
@@ -60,7 +60,7 @@ class Index(object):
         if not self.tmp_floder_path.is_dir():
             self.tmp_floder_path.mkdir()
             self.output.info(f'creating temporary folder at {self.args.tmp}.')
-        read_fastx.check_index(self.args.ref, self.args.threads)
+        read_fastx.check_index(self.args.reference, self.args.threads)
         self.args.input = read_xam.check_index(self.args.input)
 
     def check_bed(self) -> None:
@@ -114,13 +114,18 @@ class Index(object):
             self.fastx_format == 'fastq',
             self.tmp_floder_path)
 
-    def get_most_supported_gff(self) -> None:
+    def get_most_supported_fasta(self) -> None:
         """Get most supported isoforms gff."""
         self.opened_most_gff = (self.tmp_floder_path /
                                 'primary_reference.most.gff').open('w')
         write_gff.write_partial_gff(self.primary_gff,
                                     self.opened_most_gff,
                                     self.most_iso_id_list)
+        self.most_fasta_path = (self.tmp_floder_path /
+                                'primary_reference.most.fasta')
+        gff_to_fasta(self.opened_most_gff.name,
+                     self.args.reference,
+                     str(self.most_fasta_path))
 
     def process(self) -> None:
         """Call the index object."""
@@ -130,4 +135,5 @@ class Index(object):
         self.get_multimapped_reads()
         self.get_primary_region()
         self.collapse_primary_sam()
+        self.get_most_supported_fasta()
         logger.debug('Completed index Process')
