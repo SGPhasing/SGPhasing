@@ -20,8 +20,8 @@ def open_bed(input_bed: str) -> dict:
         chr_region (dict): chrom as key and region list as value.
     """
     chr_region = {}
-    with open(input_bed, 'r') as open_bed:
-        for eachline in open_bed:
+    with open(input_bed, 'r') as opened_bed:
+        for eachline in opened_bed:
             if eachline[0] != '#':
                 sp = eachline.strip().split()
                 # chrom chromStart chromEnd name score strand
