@@ -14,7 +14,7 @@ def write_partial_fastx(opened_input_fastx,
                         opened_output_fastx,
                         fastx_format: str,
                         limit_reads_set: set) -> None:
-    """Write fastx for limit region and reads.
+    """Write fastx for limit reads.
 
     Args:
         opened_input_fastx: opened input fastx handle.
