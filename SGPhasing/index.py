@@ -25,7 +25,7 @@ from pathlib import Path
 
 from SGPhasing.processor.collapse import collapse_isoforms_by_sam
 from SGPhasing.reader import read_bed, read_fastx, read_xam
-from SGPhasing.writer import write_fastx, write_xam
+from SGPhasing.writer import write_fastx, write_gff, write_xam
 from SGPhasing.sys_output import Output
 
 logger = getLogger(__name__)  # pylint: disable=invalid-name
@@ -106,12 +106,21 @@ class Index(object):
             self.fastx_format, self.primary_reads_set)
         self.opened_fastx.close()
 
-    def collapse_primary_sam(self):
-        self.primary_gff, self.primary_group = collapse_isoforms_by_sam(
+    def collapse_primary_sam(self) -> None:
+        """Collapse primary isoforms by sam."""
+        self.primary_gff, self.most_iso_id_list = collapse_isoforms_by_sam(
             str(self.primary_sam_path),
             str(self.primary_fastx_path),
             self.fastx_format == 'fastq',
             self.tmp_floder_path)
+
+    def get_most_supported_gff(self) -> None:
+        """Get most supported isoforms gff."""
+        self.opened_most_gff = (self.tmp_floder_path /
+                                'primary_reference.most.gff').open('w')
+        write_gff.write_partial_gff(self.primary_gff,
+                                    self.opened_most_gff,
+                                    self.most_iso_id_list)
 
     def process(self) -> None:
         """Call the index object."""
