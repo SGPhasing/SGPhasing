@@ -52,6 +52,6 @@ def check_index(input_ref: str, threads: int = 1) -> None:
     if not index_path.exists():
         output = Output()
         output.info('preparing genome index for minimap2.')
-        opened_aligner = mp.Aligner(input_ref, preset='splice',
+        opened_aligner = mp.Aligner(input_ref, preset='splice:hq',
                                     k=17, best_n=100,
                                     n_threads=threads, fn_idx_out=index_file)
