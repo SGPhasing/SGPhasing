@@ -19,25 +19,33 @@ from SGPhasing.sys_output import Output
 
 
 def open_fastx(input_fastx: str) -> tuple:
-    """Check input and open."""
+    """Check input and open.
+
+    Args:
+        input_fastx (str): input fasta/q file path str.
+
+    Returns:
+        opened_input_fastx : opened input fastx handle.
+        input_format (str): input file in fasta or fastq format.
+    """
     if input_fastx.endswith(('fastq', 'fq')):
-        open_input_fastx = open(input_fastx, 'r')
+        opened_input_fastx = open(input_fastx, 'r')
         input_format = 'fastq'
     elif input_fastx.endswith(('fastq.gz', 'fq.gz')):
-        open_input_fastx = gzip.open(input_fastx, 'rb')
+        opened_input_fastx = gzip.open(input_fastx, 'rb')
         input_format = 'fastq'
     elif input_fastx.endswith(('fasta', 'fa')):
-        open_input_fastx = open(input_fastx, 'r')
+        opened_input_fastx = open(input_fastx, 'r')
         input_format = 'fasta'
     elif input_fastx.endswith(('fasta.gz', 'fa.gz')):
-        open_input_fastx = gzip.open(input_fastx, 'rb')
+        opened_input_fastx = gzip.open(input_fastx, 'rb')
         input_format = 'fasta'
     else:
         output = Output()
         output.error('input error: input format must be '
                      'fastq, fasta, fq, fa, or gzipped file.')
         exit()
-    return open_input_fastx, input_format
+    return opened_input_fastx, input_format
 
 
 def check_index(input_ref: str, threads: int = 1) -> None:
