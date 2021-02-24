@@ -251,7 +251,7 @@ class SGPhasingArgs(object):
 
 
 class IndexArgs(SGPhasingArgs):
-    """."""
+    """Use full-length HiFi sequences to build snv/indel index for phasing."""
 
     @staticmethod
     def get_argument_list() -> list:
@@ -271,8 +271,8 @@ class IndexArgs(SGPhasingArgs):
             'type': str,
             'help': 'Input a fasta/fastq file paired to sam/bam/cram file.'})
         argument_list.append({
-            'opts': ('-r', '--reference'),
-            'dest': 'ref',
+            'opts': ('-r', '--ref'),
+            'dest': 'reference',
             'required': True,
             'type': str,
             'help': 'Input reference fasta file.'})
