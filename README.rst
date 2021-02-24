@@ -10,24 +10,10 @@ SGPhasing
 Table of contents
 -----------------
 
-* [Description] :ref:`description` 
-* [Getting Started] :ref:`getting-started` 
-* [Usage] :ref:`usage` 
-* [Support] :ref:`support` 
-* [Contributing] :ref:`contributing` 
-* [License] :ref:`license` 
-* [Changelog] :ref:`changelog` 
-
-`Description <https://github.com/SGPhasing/SGPhasing#description>`_
-
-.. description:
-
 Description
 -----------
 
 **SGPhasing** is a python3 package for Phasing sequences of Similar Genes.
-
-.. getting_started:
 
 Getting Started
 ---------------
@@ -70,32 +56,20 @@ Running the tests
     cd SGPhasing
     python test.py
 
-.. usage:
-
 Usage
 -----
-
-.. support:
 
 Support
 -------
 
-.. contributing:
-
 Contributing
 ------------
-
-.. citation:
 
 Citation
 --------
 
-.. license:
-
 License
 -------
-
-.. changelog:
 
 Changelog
 ---------
