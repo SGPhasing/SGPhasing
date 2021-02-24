@@ -24,6 +24,8 @@ from pathlib import Path
 
 from SGPhasing.processor.collapse import collapse_isoforms_by_sam
 from SGPhasing.processor.gff_to_fasta import gff_to_fasta
+from SGPhasing.processor.minimap2 import splice_mapper
+from SGPhasing.processor.sam_to_gff import sam_to_gff
 from SGPhasing.reader import read_bed, read_fastx, read_xam
 from SGPhasing.writer import write_fastx, write_gff, write_xam
 from SGPhasing.sys_output import Output
@@ -90,10 +92,10 @@ class Index(object):
     def get_primary_region(self) -> None:
         """Get primary region from multiply mapped reads."""
         self.primary_sam_path = self.tmp_floder_path / 'primary_reference.sam'
-        (self.primary_region,
-            self.primary_reads_set) = write_xam.write_partial_sam(
+        self.primary_region, self.primary_reads_set = (
+            write_xam.write_partial_sam(
                 self.opened_xam, str(self.primary_sam_path),
-                self.limit_region_dict, self.multimapped_reads_set)
+                self.limit_region_dict, self.multimapped_reads_set))
         del self.multimapped_reads_set
         collect()
 
@@ -108,24 +110,37 @@ class Index(object):
 
     def collapse_primary_sam(self) -> None:
         """Collapse primary isoforms by sam."""
+        self.output.info('cDNA_cupcake info:')
         self.primary_gff, self.most_iso_id_list = collapse_isoforms_by_sam(
-            str(self.primary_sam_path),
-            str(self.primary_fastx_path),
-            self.fastx_format == 'fastq',
-            self.tmp_floder_path)
+            str(self.primary_sam_path), str(self.primary_fastx_path),
+            self.fastx_format == 'fastq', self.tmp_floder_path)
 
     def get_most_supported_fasta(self) -> None:
         """Get most supported isoforms gff."""
         self.opened_most_gff = (self.tmp_floder_path /
                                 'primary_reference.most.gff').open('w')
-        write_gff.write_partial_gff(self.primary_gff,
-                                    self.opened_most_gff,
-                                    self.most_iso_id_list)
-        self.most_fasta_path = (self.tmp_floder_path /
-                                'primary_reference.most.fasta')
-        gff_to_fasta(self.opened_most_gff.name,
-                     self.args.reference,
-                     str(self.most_fasta_path))
+        write_gff.write_partial_gff(
+            self.primary_gff, self.opened_most_gff, self.most_iso_id_list)
+        self.primary_fasta_path = (self.tmp_floder_path /
+                                   'primary_reference.most.fasta')
+        self.output.info('gffread info:')
+        gff_to_fasta(self.opened_most_gff.name, self.args.reference,
+                     str(self.primary_fasta_path))
+
+    def get_link_region(self) -> None:
+        """Get linked region for each primary region."""
+        self.primary_sam_path = (self.tmp_floder_path /
+                                 'primary.minimap2_reference.sam')
+        self.output.info('minimap2 info:')
+        splice_mapper(
+            self.args.reference, str(self.primary_fasta_path),
+            str(self.primary_sam_path), self.args.threads)
+        self.opened_primary_gff = (
+            self.tmp_floder_path / 'primary.minimap2_reference.gff3').open('w')
+        self.output.info('cDNA_cupcake info:')
+        sam_to_gff(str(self.primary_sam_path),
+                   self.opened_primary_gff, str(self.primary_fasta_path))
+        self.opened_primary_gff.close()
 
     def process(self) -> None:
         """Call the index object."""
@@ -136,4 +151,5 @@ class Index(object):
         self.get_primary_region()
         self.collapse_primary_sam()
         self.get_most_supported_fasta()
+        self.get_link_region()
         logger.debug('Completed index Process')
