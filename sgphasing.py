@@ -42,7 +42,7 @@ else:
 
 
 def main() -> None:
-    """Creat subcommands and execute."""
+    """Create subcommands and execute."""
     PARSER = fullhelp_argumentparser.FullHelpArgumentParser()
     SUBPARSER = PARSER.add_subparsers()
     INDEX = fullhelp_argumentparser.IndexArgs(
