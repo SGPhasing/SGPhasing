@@ -20,13 +20,15 @@ Classes:
 
 from gc import collect
 from logging import getLogger
+from multiprocessing import Pool
 from pathlib import Path
 
 from SGPhasing.processor.collapse import collapse_isoforms_by_sam
 from SGPhasing.processor.gff_to_fasta import gff_to_fasta
 from SGPhasing.processor.minimap2 import splice_mapper
+from SGPhasing.processor.process_each_link import process_each_link
 from SGPhasing.processor.sam_to_gff import sam_to_gff
-from SGPhasing.reader import read_bed, read_fastx, read_xam
+from SGPhasing.reader import read_bed, read_fastx, read_gff, read_xam
 from SGPhasing.writer import write_fastx, write_gff, write_xam
 from SGPhasing.sys_output import Output
 
@@ -123,7 +125,7 @@ class Index(object):
             self.primary_gff, self.opened_most_gff, self.most_iso_id_list)
         self.primary_fasta_path = (self.tmp_floder_path /
                                    'primary_reference.most.fasta')
-        self.output.info('gffread info:')
+        # self.output.info('gffread info:')
         gff_to_fasta(self.opened_most_gff.name, self.args.reference,
                      str(self.primary_fasta_path))
 
@@ -135,12 +137,35 @@ class Index(object):
         splice_mapper(
             self.args.reference, str(self.primary_fasta_path),
             str(self.primary_sam_path), self.args.threads)
-        self.opened_primary_gff = (
-            self.tmp_floder_path / 'primary.minimap2_reference.gff3').open('w')
-        self.output.info('cDNA_cupcake info:')
+        self.primary_gff_path = (
+            self.tmp_floder_path / 'primary.minimap2_reference.gff3')
+        self.opened_primary_gff = self.primary_gff_path.open('w')
+        # self.output.info('cDNA_cupcake info:')
         sam_to_gff(str(self.primary_sam_path),
                    self.opened_primary_gff, str(self.primary_fasta_path))
         self.opened_primary_gff.close()
+        self.opened_primary_gff = self.primary_gff_path.open('r')
+        self.gene_linked_region = read_gff.read_gff(self.opened_primary_gff)
+        self.link_id_list, self.linked_region_list = [], []
+        for link_id, gene_id in enumerate(self.gene_linked_region.keys()):
+            full_link_id = 'sgp_region' + str(link_id)
+            self.link_id_list.append(full_link_id)
+            self.gene_linked_region[gene_id].update_info_id(full_link_id)
+            self.linked_region_list.append(self.gene_linked_region[gene_id])
+
+    def process_links(self):
+        in_pool_threads = int(self.args.threads / len(self.link_id_list))
+        in_pool_threads = in_pool_threads if in_pool_threads else 1
+        out_pool_threads = int(self.args.threads / in_pool_threads)
+        process_link_args = []
+        for link_id, linked_region in zip(
+                self.link_id_list, self.linked_region_list):
+            process_link_args.append((
+                link_id, linked_region, self.tmp_floder_path,
+                self.args.reference, self.args.input,
+                self.args.fastx, in_pool_threads))
+        with Pool(processes=out_pool_threads) as pool:
+            _ = pool.map(process_each_link, process_link_args)
 
     def process(self) -> None:
         """Call the index object."""
@@ -152,4 +177,5 @@ class Index(object):
         self.collapse_primary_sam()
         self.get_most_supported_fasta()
         self.get_link_region()
+        self.process_links()
         logger.debug('Completed index Process')
