@@ -7,7 +7,12 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.reader read gff file."""
+"""SGPhasing.reader read gff file.
+
+Functions:
+  - read_gff
+  - get_info_dict
+"""
 
 from gc import collect
 
@@ -17,6 +22,15 @@ from SGPhasing.Regions import merge_two_linked_regions
 
 
 def read_gff(opened_gff) -> dict:
+    """Read gff file and extract region information.
+
+    Args:
+        opened_gff: opened input gff handle.
+
+    Returns:
+        gene_id_linked_region (dict): gene_id as key and
+                                      linked_region as value.
+    """
     gene_id_linked_region = {}
     for eachline in opened_gff:
         if eachline[0] != '#':
@@ -71,6 +85,14 @@ def read_gff(opened_gff) -> dict:
 
 
 def get_info_dict(anno_info: str) -> dict:
+    """Get information from gff3 9th column.
+
+    Args:
+        anno_info (str): gff3 9th column string.
+
+    Returns:
+        info_dict (dict): gff3 9th column information dictionary.
+    """
     info_dict = {}
     info_sp = anno_info.split(';')
     for each_info in info_sp:

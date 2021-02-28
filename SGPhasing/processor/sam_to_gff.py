@@ -7,7 +7,12 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.processor convert sam to gff3."""
+"""SGPhasing.processor convert sam to gff3.
+
+Functions:
+  - sam_to_gff
+  - sam_record_to_gff_record
+"""
 
 from sys import stderr
 
@@ -25,9 +30,9 @@ def sam_to_gff(input_sam: str,
     """Convert sam to gff3.
 
     Args:
-        input_sam (str): .
-        opened_output_gff: .
-        input_fasta (str): .
+        input_sam (str): input sam file path string.
+        opened_output_gff: opened output gff3 file handle.
+        input_fasta (str): input reads fasta file.
     """
     read_id_len_dict = {}
     if input_fasta:
