@@ -7,12 +7,12 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""Represent a full help argument parser and execute.
+"""Index with alleles of high quality full-length transcriptome sequences.
 
 What's here:
 
-Loads the relevant script modules and executes the script.
-----------------------------------------------------------
+Index with alleles the process.
+-------------------------------
 
 Classes:
   - Index
@@ -39,15 +39,15 @@ class Index(object):
     """The Index process.
 
     Attributes:
-      - args: Arguments.
-      - output: Output info, warning and error.
+        args: Arguments.
+        output: Output info, warning and error.
     """
 
     def __init__(self, arguments) -> None:
         """Initialize Index.
 
         Args:
-          - arguments: Arguments.
+            arguments: Arguments.
         """
         self.args = arguments
         self.output = Output()
@@ -154,6 +154,7 @@ class Index(object):
             self.linked_region_list.append(self.gene_linked_region[gene_id])
 
     def process_links(self):
+        """Using multiply threads process each linked region."""
         in_pool_threads = int(self.args.threads / len(self.link_id_list))
         in_pool_threads = in_pool_threads if in_pool_threads else 1
         out_pool_threads = int(self.args.threads / in_pool_threads)
