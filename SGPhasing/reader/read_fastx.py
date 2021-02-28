@@ -7,7 +7,12 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.reader read fastx file."""
+"""SGPhasing.reader read fasta/q file.
+
+Functions:
+  - open_fastx
+  - check_index
+"""
 
 import gzip
 from pathlib import Path
@@ -22,7 +27,7 @@ def open_fastx(input_fastx: str) -> tuple:
     """Check input and open.
 
     Args:
-        input_fastx (str): input fasta/q file path str.
+        input_fastx (str): input fasta/q file path string.
 
     Returns:
         opened_input_fastx : opened input fastx handle.
@@ -53,7 +58,7 @@ def check_index(input_ref: str, threads: int = 1) -> None:
 
     Args:
         input_ref (str): input reference fasta file path str.
-        threads (int): threads using for mappy to index.
+        threads (int): threads using for mappy to index, default = 1.
     """
     index_file = input_ref + '.mmi'
     index_path = Path(index_file)

@@ -7,14 +7,21 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.reader read bed file."""
+"""SGPhasing.reader read bed file.
+
+Functions:
+  - open_bed
+  - merge_region
+  - unfold_region
+  - fold_region
+"""
 
 
 def open_bed(input_bed: str) -> dict:
     """Read bed file.
 
     Args:
-        input_bed (str): input bed file path str.
+        input_bed (str): input bed file path string.
 
     Returns:
         chr_region (dict): chrom as key and region list as value.

@@ -7,7 +7,14 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.reader read sam, bam or cram file."""
+"""SGPhasing.reader read sam, bam or cram file.
+
+Functions:
+  - open_xam
+  - check_index
+  - check_flag
+  - read_to_fastq
+"""
 
 from sys import exit
 
@@ -20,7 +27,7 @@ def open_xam(input_xam: str) -> tuple:
     """Check input and open.
 
     Args:
-        input_xam (str): input sam or bam file path str.
+        input_xam (str): input sam or bam file path string.
 
     Returns:
         xamfile (pysam.AlignmentFile): pysam open format.
@@ -47,8 +54,8 @@ def check_index(input_xam: str, threads: int = 1) -> None:
     """Build index for bam if not exists.
 
     Args:
-        input_xam (str): input sam or bam file path str.
-        threads (int): threads using for pysam sort and index.
+        input_xam (str): input sam or bam file path string.
+        threads (int): threads using for pysam sort and index, default = 1.
     """
     xamfile, input_format = open_xam(input_xam)
     try:

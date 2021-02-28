@@ -7,7 +7,11 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.processor convert gff3 to fasta."""
+"""SGPhasing.processor convert gff3 to fasta.
+
+Functions:
+  - gff_to_fasta
+"""
 
 from subprocess import PIPE, Popen
 
@@ -18,9 +22,9 @@ def gff_to_fasta(input_gff: str,
     """Convert gff3 to fasta.
 
     Args:
-        input_gff (str): input gff3 file path str.
-        input_ref_fasta (str): input reference fasta file path str.
-        output_fasta (str): output fasta file path str.
+        input_gff (str): input gff3 file path string.
+        input_ref_fasta (str): input reference fasta file path string.
+        output_fasta (str): output fasta file path string.
 
     Returns:
         (str): gffread print.

@@ -7,7 +7,12 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.processor collapse isoforms by sam."""
+"""SGPhasing.processor collapse isoforms by sam.
+
+Functions:
+  - collapse_isoforms_by_sam
+  - get_most_supported_isoforms
+"""
 
 from pathlib import Path
 
@@ -22,13 +27,13 @@ def collapse_isoforms_by_sam(input_sam: str,
     """Collapse isoforms by sam.
 
     Args:
-        input_sam (str): input sam path str.
-        input_fastx (str): input fastx path str.
+        input_sam (str): input sam path string.
+        input_fastx (str): input fastx path string.
         is_fq (bool): input_fastx is in fastq format,
         tmp_dir (PosixPath): temporary folder PosixPath.
 
     Returns:
-        gff_path (str): primary_reference.collapsed.gff path str.
+        gff_path (str): primary_reference.collapsed.gff path string.
         most_iso_id_list (list): most supported isoforms id list.
     """
     opened_gff = (tmp_dir/'primary_reference.collapsed.gff').open('w')
@@ -57,7 +62,7 @@ def get_most_supported_isoforms(input_group: str) -> list:
     """Get most supported isoforms.
 
     Args:
-        input_group (str): primary_reference.collapsed.group.txt path str.
+        input_group (str): primary_reference.collapsed.group.txt path string.
 
     Returns:
         most_iso_id_list (list): most supported isoforms id list.

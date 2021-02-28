@@ -7,7 +7,11 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.writer write xam file."""
+"""SGPhasing.writer write sam file.
+
+Functions:
+  - write_partial_sam
+"""
 
 from pysam import AlignmentFile
 
@@ -22,7 +26,7 @@ def write_partial_sam(opened_input_xam: AlignmentFile,
 
     Args:
         opened_input_xam (pysam.AlignmentFile): pysam open format.
-        output_sam (str): output sam path str.
+        output_sam (str): output sam path string.
         limit_region_dict (dict): chrom as key and region list as value.
         limit_reads_set (set): limited reads id set.
 

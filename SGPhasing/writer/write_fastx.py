@@ -7,7 +7,11 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.writer write fastx file."""
+"""SGPhasing.writer write fasta/q file.
+
+Functions:
+  - write_partial_fastx
+"""
 
 
 def write_partial_fastx(opened_input_fastx,

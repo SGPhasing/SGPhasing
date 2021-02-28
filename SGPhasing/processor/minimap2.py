@@ -7,7 +7,12 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.processor minimap2."""
+"""SGPhasing.processor minimap2.
+
+Functions:
+  - splice_mapper
+  - genomic_mapper
+"""
 
 from subprocess import PIPE, Popen
 
@@ -19,10 +24,10 @@ def splice_mapper(input_ref: str,
     """Call minimap2 for splice mapping.
 
     Args:
-        input_ref (str): input reference fasta file path str.
-        input_fastx (str): input sequences fasta/q file path str.
-        output_sam (str): output sam file path str.
-        threads (int): threads using for minimap2.
+        input_ref (str): input reference fasta file path string.
+        input_fastx (str): input sequences fasta/q file path string.
+        output_sam (str): output sam file path string.
+        threads (int): threads using for minimap2, default = 1.
 
     Returns:
         (str): minimap2 print.
@@ -41,11 +46,11 @@ def genomic_mapper(input_ref: str,
     """Call minimap2 for splice mapping.
 
     Args:
-        input_ref (str): input reference fasta file path str.
-        input_fastx (str): input sequences fasta/q file path str.
-        output_sam (str): output sam file path str.
+        input_ref (str): input reference fasta file path string.
+        input_fastx (str): input sequences fasta/q file path string.
+        output_sam (str): output sam file path string.
         preset (str): minimap2 preset.
-        threads (int): threads using for minimap2.
+        threads (int): threads using for minimap2, default = 1.
 
     Returns:
         (str): minimap2 print.
