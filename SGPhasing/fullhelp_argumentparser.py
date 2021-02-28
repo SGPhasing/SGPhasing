@@ -64,17 +64,17 @@ class ScriptExecutor(object):
     command, then execute script is called within their set_default function.
 
     Attributes:
-      - command (str): Full commands.
-      - subparsers: Subparsers for each subcommand.
-      - output: Output info, warning and error.
+        command (str): Full commands.
+        subparsers: Subparsers for each subcommand.
+        output: Output info, warning and error.
     """
 
     def __init__(self, command: str, subparsers=None) -> None:
         """Initialize ScriptExecutor.
 
         Args:
-          - command (str): Full commands.
-          - subparsers: Subparsers for each subcommand.
+            command (str): Full commands.
+            subparsers: Subparsers for each subcommand.
         """
         self.command = command.lower()
         self.subparsers = subparsers
@@ -143,10 +143,10 @@ class SmartFormatter(HelpFormatter):
         """Initialize SmartFormatter.
 
         Args:
-          - prog (str): Program name.
-          - indent_increment (int): Indent increment. default 2.
-          - max_help_position (int): Max help position. default 24.
-          - width: Width.
+            prog (str): Program name.
+            indent_increment (int): Indent increment. default 2.
+            max_help_position (int): Max help position. default 24.
+            width: Width.
         """
         super().__init__(prog, indent_increment, max_help_position, width)
         self._whitespace_matcher_limited = compile(r'[ \r\f\v]+', ASCII)
@@ -173,10 +173,10 @@ class SGPhasingArgs(object):
     Should be the parent function of all subsequent argparsers.
 
     Attributes:
-      - global_arguments: Global arguments.
-      - argument_list: Argument list.
-      - optional_arguments: Optional arguments.
-      - parser: Parser.
+        global_arguments: Global arguments.
+        argument_list: Argument list.
+        optional_arguments: Optional arguments.
+        parser: Parser.
     """
 
     def __init__(self, subparser, command: str,
@@ -184,10 +184,10 @@ class SGPhasingArgs(object):
         """Initialize SGPhasingArgs.
 
         Args:
-          - subparser: Subparser.
-          - command (str): Command.
-          - description (str): Description. default 'default'.
-          - subparsers: Subparsers.
+            subparser: Subparser.
+            command (str): Command.
+            description (str): Description. default 'default'.
+            subparsers: Subparsers.
         """
         self.global_arguments = self.get_global_arguments()
         self.argument_list = self.get_argument_list()
@@ -285,7 +285,6 @@ class IndexArgs(SGPhasingArgs):
             'help': 'Input a limitation region bed file for phasing.'})
         argument_list.append({
             'opts': ('-t', '--threads'),
-            # 'action': 'store',
             'dest': 'threads',
             'required': False,
             'type': int,

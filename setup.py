@@ -48,11 +48,11 @@ class Environment(object):
     """The current install environment.
 
     Attributes:
-      - output: Output info, warning and error.
-      - is_installer (bool): Whether to enter the installer mode.
-      - missing_packages (list): Missing packages from current environment.
-      - conda_missing_packages (list): Missing packages from current
-        conda environment.
+        output: Output info, warning and error.
+        is_installer (bool): Whether to enter the installer mode.
+        missing_packages (list): Missing packages from current environment.
+        conda_missing_packages (list): Missing packages from current
+                                       conda environment.
     """
 
     def __init__(self) -> None:
@@ -240,15 +240,15 @@ class Install(object):
     """Install the requirements.
 
     Attributes:
-      - output: Output info, warning and error.
-      - env: Environment.
+        output: Output info, warning and error.
+        env: Environment.
     """
 
-    def __init__(self, environment) -> None:
+    def __init__(self, environment: Environment) -> None:
         """Initialize an Install.
 
         Args:
-          - environment: Store an environment.
+            environment (Environment): Store an environment.
         """
         self.output = Output()
         self.env = environment
