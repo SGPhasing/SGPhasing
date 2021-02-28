@@ -7,9 +7,9 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing is a Python3 package for ***.
+"""SGPhasing is a Python3 package for Phasing sequences of Similar Genes.
 
-This is a rough draft of the author's analysis of ***.
+This is a rough draft of the author's analysis of sequences of Similar Genes.
 We will continue to add applications until we felt ready to say OK, and
 we will release an official version through pip and bioconda.
 
@@ -48,8 +48,8 @@ def main() -> None:
     INDEX = fullhelp_argumentparser.IndexArgs(
         SUBPARSER,
         'index',
-        """Indexing with high quality full-length
-            transcriptome sequences allele.""")
+        """Indexing with alleles of high quality
+            full-length transcriptome sequences.""")
     PHASE = fullhelp_argumentparser.PhaseArgs(
         SUBPARSER,
         'phase',
