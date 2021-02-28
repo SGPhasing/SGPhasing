@@ -29,11 +29,6 @@ Installation
 Running the tests
 ~~~~~~~~~~~~~~~~~
 
-.. code-block:: shell
-
-    cd SGPhasing
-    python test.py
-
 Usage
 -----
 
