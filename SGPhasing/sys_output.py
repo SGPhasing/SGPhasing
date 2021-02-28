@@ -25,11 +25,11 @@ class Output():
     """Format and display output.
 
     Attributes:
-      - red: Red color.
-      - green: Green color.
-      - yellow: Yellow color.
-      - default_color: Default color.
-      - term_support_color: Term support color.
+        red: Red color.
+        green: Green color.
+        yellow: Yellow color.
+        default_color: Default color.
+        term_support_color: Term support color.
     """
 
     def __init__(self) -> None:
