@@ -9,7 +9,7 @@
 # have been included as part of this package.
 """SGPhasing.processor collapse isoforms by sam."""
 
-from pathlib import PosixPath
+from pathlib import Path
 
 from cupcake.tofu.utils import check_ids_unique
 from cupcake.tofu.branch.branch_simple2 import BranchSimple
@@ -18,7 +18,7 @@ from cupcake.tofu.branch.branch_simple2 import BranchSimple
 def collapse_isoforms_by_sam(input_sam: str,
                              input_fastx: str,
                              is_fq: bool,
-                             tmp_dir: PosixPath) -> tuple:
+                             tmp_dir: Path) -> tuple:
     """Collapse isoforms by sam.
 
     Args:
