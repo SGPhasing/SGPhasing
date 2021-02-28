@@ -52,5 +52,5 @@ def genomic_mapper(input_ref: str,
     """
     with Popen(['minimap2', '-k', '17', '-a', '-o', output_sam,
                 '--MD', '-t', str(threads), '-x', preset,
-                input_ref+'.mmi', input_fastx], stdout=PIPE) as proc:
+                input_ref, input_fastx], stdout=PIPE) as proc:
         return proc.stdout.read().decode('utf-8').strip()
