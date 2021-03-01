@@ -297,6 +297,13 @@ class IndexArgs(SGPhasingArgs):
             'default': '',
             'type': str,
             'help': 'Temporary folder [default=input.sgphasing.tmp].'})
+        argument_list.append({
+            'opts': ('-v', '--verbose'),
+            'dest': 'verbose',
+            'action': 'store_true',
+            'required': False,
+            'default': False,
+            'help': 'Increase verbosity.'})
         return argument_list
 
 
