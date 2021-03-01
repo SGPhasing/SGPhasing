@@ -198,6 +198,9 @@ class Linked_Region(object):
         new_region = self.Primary_Region.copy()
         new_region.start -= length
         new_region.end += length
+        if new_region.child_list:
+            new_region.child_list[0].start -= length
+            new_region.child_list[-1].end += length
         return new_region
 
     def write_gff(self, output_gff: str) -> None:
