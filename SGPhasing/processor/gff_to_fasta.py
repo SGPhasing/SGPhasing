@@ -17,18 +17,18 @@ from subprocess import PIPE, Popen
 
 
 def gff_to_fasta(input_gff: str,
-                 input_ref_fasta: str,
+                 reference: str,
                  output_fasta: str) -> str:
     """Convert gff3 to fasta.
 
     Args:
         input_gff (str): input gff3 file path string.
-        input_ref_fasta (str): input reference fasta file path string.
+        reference (str): input reference fasta file path string.
         output_fasta (str): output fasta file path string.
 
     Returns:
         (str): gffread print.
     """
-    with Popen(['gffread', input_gff, '-g', input_ref_fasta,
+    with Popen(['gffread', input_gff, '-g', reference,
                 '-w', output_fasta], stdout=PIPE) as proc:
         return proc.stdout.read().decode('utf-8').strip()

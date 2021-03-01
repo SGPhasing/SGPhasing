@@ -17,14 +17,14 @@ Functions:
 from subprocess import PIPE, Popen
 
 
-def splice_mapper(input_ref: str,
+def splice_mapper(reference: str,
                   input_fastx: str,
                   output_sam: str,
                   threads: int = 1) -> str:
     """Call minimap2 for splice mapping.
 
     Args:
-        input_ref (str): input reference fasta file path string.
+        reference (str): input reference fasta file path string.
         input_fastx (str): input sequences fasta/q file path string.
         output_sam (str): output sam file path string.
         threads (int): threads using for minimap2, default = 1.
@@ -34,19 +34,19 @@ def splice_mapper(input_ref: str,
     """
     with Popen(['minimap2', '-k', '17', '-uf', '-a', '-o', output_sam,
                 '--MD', '-t', str(threads), '-x', 'splice:hq',
-                input_ref+'.mmi', input_fastx], stdout=PIPE) as proc:
+                reference+'.mmi', input_fastx], stdout=PIPE) as proc:
         return proc.stdout.read().decode('utf-8').strip()
 
 
-def genomic_mapper(input_ref: str,
+def genomic_mapper(reference: str,
                    input_fastx: str,
                    output_sam: str,
                    preset: str,
                    threads: int = 1) -> str:
-    """Call minimap2 for splice mapping.
+    """Call minimap2 for genomic mapping.
 
     Args:
-        input_ref (str): input reference fasta file path string.
+        reference (str): input reference fasta file path string.
         input_fastx (str): input sequences fasta/q file path string.
         output_sam (str): output sam file path string.
         preset (str): minimap2 preset.
@@ -57,5 +57,5 @@ def genomic_mapper(input_ref: str,
     """
     with Popen(['minimap2', '-k', '17', '-a', '-o', output_sam,
                 '--MD', '-t', str(threads), '-x', preset,
-                input_ref, input_fastx], stdout=PIPE) as proc:
+                reference, input_fastx], stdout=PIPE) as proc:
         return proc.stdout.read().decode('utf-8').strip()

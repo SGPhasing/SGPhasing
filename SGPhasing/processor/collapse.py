@@ -27,13 +27,13 @@ def collapse_isoforms_by_sam(input_sam: str,
     """Collapse isoforms by sam.
 
     Args:
-        input_sam (str): input sam path string.
-        input_fastx (str): input fastx path string.
+        input_sam (str): input sam file path string.
+        input_fastx (str): input fasta/q file path string.
         is_fq (bool): input_fastx is in fastq format,
         tmp_dir (PosixPath): temporary folder PosixPath.
 
     Returns:
-        gff_path (str): primary_reference.collapsed.gff path string.
+        gff_path (str): primary_reference.collapsed.gff file path string.
         most_iso_id_list (list): most supported isoforms id list.
     """
     opened_gff = (tmp_dir/'primary_reference.collapsed.gff').open('w')
@@ -62,7 +62,8 @@ def get_most_supported_isoforms(input_group: str) -> list:
     """Get most supported isoforms.
 
     Args:
-        input_group (str): primary_reference.collapsed.group.txt path string.
+        input_group (str): primary_reference.collapsed.group.txt
+                           file path string.
 
     Returns:
         most_iso_id_list (list): most supported isoforms id list.
