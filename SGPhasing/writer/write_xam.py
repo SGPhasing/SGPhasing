@@ -11,14 +11,15 @@
 
 Functions:
   - write_partial_sam
+  - sam_to_bam
 """
 
-from pysam import AlignmentFile
+import pysam
 
 from SGPhasing.reader.read_bed import merge_region
 
 
-def write_partial_sam(opened_input_xam: AlignmentFile,
+def write_partial_sam(opened_input_xam: pysam.AlignmentFile,
                       output_sam: str,
                       limit_region_dict: dict,
                       limit_reads_set: set) -> tuple:
@@ -26,7 +27,7 @@ def write_partial_sam(opened_input_xam: AlignmentFile,
 
     Args:
         opened_input_xam (pysam.AlignmentFile): pysam open format.
-        output_sam (str): output sam path string.
+        output_sam (str): output sam file path string.
         limit_region_dict (dict): chrom as key and region list as value.
         limit_reads_set (set): limited reads id set.
 
@@ -34,7 +35,7 @@ def write_partial_sam(opened_input_xam: AlignmentFile,
         chr_region (dict): chrom as key and region list as value.
         output_reads_set (set): output reads id set.
     """
-    opened_output_sam = AlignmentFile(
+    opened_output_sam = pysam.AlignmentFile(
         output_sam, 'w', template=opened_input_xam)
     chr_region, output_reads_set = {}, set()
     if limit_region_dict:
@@ -57,3 +58,19 @@ def write_partial_sam(opened_input_xam: AlignmentFile,
                     (read.reference_start, read.reference_end))
     opened_output_sam.close()
     return merge_region(chr_region), output_reads_set
+
+
+def sam_to_bam(input_sam: str,
+               reference: str,
+               output_bam: str,
+               threads: int = 1) -> None:
+    """Sort sam and save to bam.
+
+    Args:
+        input_sam (str): input sam file path string.
+        reference (str): input reference fasta file path string.
+        output_bam (str): output bam file path string.
+        threads (int): threads using for pysam.sort, default = 1.
+    """
+    pysam.sort('-o', output_bam, '--output-fmt', 'BAM',
+               '--reference', reference, '--threads', str(threads), input_sam)
