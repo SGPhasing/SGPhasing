@@ -19,6 +19,7 @@ from pathlib import Path
 from sys import exit
 
 import mappy as mp
+import pysam
 
 from SGPhasing.sys_output import Output
 
@@ -30,41 +31,46 @@ def open_fastx(input_fastx: str) -> tuple:
         input_fastx (str): input fasta/q file path string.
 
     Returns:
-        opened_input_fastx : opened input fastx handle.
+        opened_fastx : opened input fastx handle.
         input_format (str): input file in fasta or fastq format.
     """
     if input_fastx.endswith(('fastq', 'fq')):
-        opened_input_fastx = open(input_fastx, 'r')
+        opened_fastx = open(input_fastx, 'r')
         input_format = 'fastq'
     elif input_fastx.endswith(('fastq.gz', 'fq.gz')):
-        opened_input_fastx = gzip.open(input_fastx, 'rb')
+        opened_fastx = gzip.open(input_fastx, 'rb')
         input_format = 'fastq'
     elif input_fastx.endswith(('fasta', 'fa')):
-        opened_input_fastx = open(input_fastx, 'r')
+        opened_fastx = open(input_fastx, 'r')
         input_format = 'fasta'
     elif input_fastx.endswith(('fasta.gz', 'fa.gz')):
-        opened_input_fastx = gzip.open(input_fastx, 'rb')
+        opened_fastx = gzip.open(input_fastx, 'rb')
         input_format = 'fasta'
     else:
         output = Output()
         output.error('input error: input format must be '
                      'fastq, fasta, fq, fa, or gzipped file.')
         exit()
-    return opened_input_fastx, input_format
+    return opened_fastx, input_format
 
 
-def check_index(input_ref: str, threads: int = 1) -> None:
+def check_index(reference: str, threads: int = 1) -> None:
     """Build index for minimap2 if not exists.
 
     Args:
-        input_ref (str): input reference fasta file path str.
+        reference (str): input reference fasta file path str.
         threads (int): threads using for mappy to index, default = 1.
     """
-    index_file = input_ref + '.mmi'
+    index_file = reference + '.mmi'
     index_path = Path(index_file)
     if not index_path.exists():
         output = Output()
         output.info('preparing genome index for minimap2.')
-        opened_aligner = mp.Aligner(input_ref, preset='splice:hq',
+        opened_aligner = mp.Aligner(reference, preset='splice:hq',
                                     k=17, best_n=100,
                                     n_threads=threads, fn_idx_out=index_file)
+
+
+def faidx(reference: str) -> None:
+    """Build samtools fasta index."""
+    pysam.faidx('--length', '70', reference)
