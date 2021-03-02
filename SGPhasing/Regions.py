@@ -28,6 +28,8 @@ Functions:
   - update_info_str_id
 """
 
+from io import TextIOWrapper
+
 from SGPhasing.sys_output import Output
 
 
@@ -122,11 +124,11 @@ class Region(object):
             self.chrom, 'sgphasing_tmp', 'mRNA' if self.child_list else 'exon',
             str(self.start), str(self.end), '.', self.strand, '.', self.info])
 
-    def write_gff(self, opened_gff) -> None:
+    def write_gff(self, opened_gff: TextIOWrapper) -> None:
         """Write this region and all child regions to gff3 file.
 
         Args:
-            opened_gff: opened gff3 file handle.
+            opened_gff (TextIOWrapper): opened gff3 file handle.
         """
         opened_gff.write(self.to_gff_string() + '\n')
         for each_child in self.child_list:
