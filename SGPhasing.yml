@@ -106,8 +106,8 @@ dependencies:
   - python-lzo=1.12=py38h86e1cee_1003
   - python_abi=3.8=1_cp38
   - r-base=4.0.3=hd23ff56_6
+  - rich=9.12.3=py38h578d9bd_0
   - readline=8.1=h27cfd23_0
-  - samtools=1.11=h6270b1f_0
   - scikit-learn=0.24.1=py38h658cfdd_0
   - scipy=1.6.0=py38hb2138dd_0
   - sed=4.8=h7b6447c_0
