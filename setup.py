@@ -41,8 +41,6 @@ import sys
 
 from SGPhasing.sys_output import Output
 
-INSTALL_FAILED = False
-
 
 class Environment(object):
     """The current install environment.
@@ -66,7 +64,7 @@ class Environment(object):
                                         ('minimap2', 'bioconda'),
                                         ('numpy',),
                                         ('pysam', 'bioconda'),
-                                        ('samtools', 'bioconda')]
+                                        ('rich', 'conda-forge')]
         self.missing_packages = []
         self.conda_missing_packages = []
 

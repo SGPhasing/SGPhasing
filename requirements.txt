@@ -5,4 +5,4 @@ mappy
 minimap2
 numpy
 pysam
-samtools
+rich
