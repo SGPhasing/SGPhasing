@@ -10,11 +10,11 @@
 """SGPhasing.reader read vcf file.
 
 Functions:
-  - get_pos_ref_alt
+  - get_alt_positions
 """
 
 
-def get_pos_ref_alt(input_vcf: str, ploidy: int) -> dict:
+def get_alt_positions(input_vcf: str, ploidy: int) -> list:
     """Get position ref base and alt base.
 
     Args:
@@ -22,22 +22,23 @@ def get_pos_ref_alt(input_vcf: str, ploidy: int) -> dict:
         ploidy (int): ploidy number.
 
     Returns:
-        pos_ref_alt (dict): position as key and [REF, ALT] as value.
+        positions_list (dict): positions list.
     """
     min_freq = 0.5 / ploidy
     max_freq = 1 - min_freq
-    pos_ref_alt = {}
+    positions_list = []
     with open(input_vcf, 'r') as opened_vcf:
         for eachline in opened_vcf:
             if eachline[0] != '#':
                 sp = eachline.strip().split()
-                if len(sp[4]) == 1:
+                alt_sp = sp[4].split(',')
+                if any([len(alt) == 1 for alt in alt_sp]):
                     merge_sp = sp[9].split(':')
                     dp = int(merge_sp[2])
                     if all([min_freq < int(ph_dp) / dp < max_freq
-                            for ph_dp in merge_sp[1].split(',')]):
+                            for ph_dp in merge_sp[1].split(',')[1:]]):
                         if len(sp[3]) == 1:
-                            pos_ref_alt.update({int(sp[1])-1: sp[3:5]})
+                            positions_list.append(int(sp[1])-1)
                         else:
-                            pos_ref_alt.update({int(sp[1]): [sp[3][1:], '-']})
-    return pos_ref_alt
+                            positions_list.append(int(sp[1]))
+    return positions_list
