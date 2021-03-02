@@ -20,24 +20,18 @@ Classes:
 
 from platform import system
 
+from rich import print as rprint
+
 
 class Output():
     """Format and display output.
 
     Attributes:
-        red: Red color.
-        green: Green color.
-        yellow: Yellow color.
-        default_color: Default color.
         term_support_color: Term support color.
     """
 
     def __init__(self) -> None:
         """Initialize Output."""
-        self.red = '\033[31m'
-        self.green = '\033[32m'
-        self.yellow = '\033[33m'
-        self.default_color = '\033[0m'
         self.term_support_color = system() in ('Linux', 'Darwin')
 
     @staticmethod
@@ -53,24 +47,26 @@ class Output():
         return text
 
     def info(self, text: str) -> None:
-        """Format INFO Text."""
-        trm = 'INFO    '
-        if self.term_support_color:
-            trm = f'{self.green}INFO   {self.default_color} '
-        print(trm + self.__indent_text_block(text))
+        """Format INFO text."""
+        if text:
+            trm = 'INFO    '
+            if self.term_support_color:
+                trm = (':information_source: ' +
+                       '[bright_green]INFO[/bright_green]    ')
+            rprint(trm + self.__indent_text_block(text))
 
     def warning(self, text: str) -> None:
-        """Format WARNING Text."""
-        trm = 'WARNING '
-        if self.term_support_color:
-            trm = f'{self.yellow}WARNING{self.default_color} '
-        print(trm + self.__indent_text_block(text))
+        """Format WARNING text."""
+        if text:
+            trm = 'WARNING '
+            if self.term_support_color:
+                trm = ':warning: [bright_yellow]WARNING[/bright_yellow] '
+            rprint(trm + self.__indent_text_block(text))
 
     def error(self, text: str) -> None:
-        """Format ERROR Text."""
-        global INSTALL_FAILED  # pylint:disable=global-statement
-        trm = 'ERROR   '
-        if self.term_support_color:
-            trm = f'{self.red}ERROR  {self.default_color} '
-        print(trm + self.__indent_text_block(text))
-        INSTALL_FAILED = True
+        """Format ERROR text."""
+        if text:
+            trm = 'ERROR   '
+            if self.term_support_color:
+                trm = ':no_entry: [bright_red]ERROR[/bright_red]   '
+            rprint(trm + self.__indent_text_block(text))
