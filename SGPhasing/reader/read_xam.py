@@ -12,6 +12,7 @@
 Functions:
   - open_xam
   - check_index
+  - extract_read_matrix
   - check_flag
   - read_to_fastq
 """
@@ -50,7 +51,7 @@ def open_xam(input_xam: str) -> tuple:
     return xamfile, input_format
 
 
-def check_index(input_xam: str, threads: int = 1) -> None:
+def check_index(input_xam: str, threads: int = 1) -> str:
     """Build index for bam if not exists.
 
     Args:
@@ -63,13 +64,13 @@ def check_index(input_xam: str, threads: int = 1) -> None:
         return input_xam
     except ValueError:
         output = Output()
-        output.info(f'preparing samtools index for input {input_xam}.')
+        output.info(f'Preparing samtools index for input {input_xam}.')
         pysam.index(input_xam, '-b', '-m', '17', '-@', str(threads))
         xamfile.close()
         return input_xam
     except AttributeError:
         output = Output()
-        output.info(f'preparing samtools index for input {input_xam}.')
+        output.info(f'Preparing samtools index for input {input_xam}.')
         if input_format == 'sam':
             input_bam = input_xam[:-3] + 'bam'
             pysam.sort('-o', input_bam, '--output-fmt', 'BAM',
@@ -81,6 +82,48 @@ def check_index(input_xam: str, threads: int = 1) -> None:
             output.error('input error: input format must be'
                          ' cram, bam or sam file.')
             exit()
+
+
+def extract_read_matrix(input_bam: str, positions_list: list) -> tuple:
+    """Extract reads base matrix.
+
+    Args:
+        input_bam (str): input bam file path string.
+        positions_list (list): input positions list.
+
+    Returns:
+        reads_id_list (list): extracted reads id list.
+        read_base_matrix (list): extracted reads base matrix list.
+    """
+    read_base_matrix, reads_id_list = [], []
+    opened_bam = pysam.AlignmentFile(input_bam, 'rb')
+    alt_num = len(positions_list)
+    for read_index, read in enumerate(opened_bam.fetch()):
+        read_id = read.query_name
+        reads_id_list.append(read_id)
+        read_base_matrix.append(['' for alt_id in range(alt_num)])
+    alt_id = 0
+    for pileupcolumn in opened_bam.pileup():
+        if pileupcolumn.pos in positions_list:
+            for pileupread in pileupcolumn.pileups:
+                read_index = reads_id_list.index(
+                    pileupread.alignment.query_name)
+                if pileupread.is_del:
+                    read_base_matrix[read_index][alt_id] = '-'
+                else:
+                    read_base_matrix[read_index][alt_id] = (
+                        pileupread.alignment.query_sequence[
+                            pileupread.query_position])
+            alt_id += 1
+    opened_bam.close()
+    rm_reads_id_list = []
+    for read_id, read_alt in zip(reads_id_list, read_base_matrix):
+        if all([alt == '' for alt in read_alt]):
+            rm_reads_id_list.append(read_id)
+    for read_id in rm_reads_id_list:
+        del read_base_matrix[reads_id_list.index(read_id)]
+        reads_id_list.remove(read_id)
+    return reads_id_list, read_base_matrix
 
 
 def check_flag(read: pysam.AlignedSegment, flag: int) -> bool:
