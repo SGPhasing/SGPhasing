@@ -13,16 +13,18 @@ Functions:
   - write_partial_fastx
 """
 
+from io import TextIOWrapper
 
-def write_partial_fastx(opened_input_fastx,
-                        opened_output_fastx,
+
+def write_partial_fastx(opened_input_fastx: TextIOWrapper,
+                        opened_output_fastx: TextIOWrapper,
                         fastx_format: str,
                         limit_reads_set: set) -> None:
     """Write fastx for limit reads.
 
     Args:
-        opened_input_fastx: opened input fastx handle.
-        opened_output_fastx: opened output fastx handle.
+        opened_input_fastx (TextIOWrapper): opened input fastx handle.
+        opened_output_fastx (TextIOWrapper): opened output fastx handle.
         fastx_format (str): input fastx file format.
         limit_reads_set (set): limited reads id set.
     """

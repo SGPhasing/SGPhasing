@@ -31,7 +31,7 @@ def open_fastx(input_fastx: str) -> tuple:
         input_fastx (str): input fasta/q file path string.
 
     Returns:
-        opened_fastx : opened input fastx handle.
+        opened_fastx (TextIOWrapper): opened input fastx handle.
         input_format (str): input file in fasta or fastq format.
     """
     if input_fastx.endswith(('fastq', 'fq')):

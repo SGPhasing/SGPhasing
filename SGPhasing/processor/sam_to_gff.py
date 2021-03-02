@@ -14,6 +14,7 @@ Functions:
   - sam_record_to_gff_record
 """
 
+from io import TextIOWrapper
 from sys import stderr
 
 from BCBio import GFF as BCBio_GFF
@@ -21,17 +22,17 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from Bio.SeqRecord import SeqRecord
-from cupcake.io.BioReaders import GMAPSAMReader
+from cupcake.io.BioReaders import GMAPSAMReader, GMAPSAMRecord
 
 
 def sam_to_gff(input_sam: str,
-               opened_output_gff,
+               opened_gff: TextIOWrapper,
                input_fasta: str = '') -> None:
     """Convert sam to gff3.
 
     Args:
         input_sam (str): input sam file path string.
-        opened_output_gff: opened output gff3 file handle.
+        opened_gff (TextIOWrapper): opened output gff3 file handle.
         input_fasta (str): input reads fasta file.
     """
     read_id_len_dict = {}
@@ -43,14 +44,15 @@ def sam_to_gff(input_sam: str,
                for record in GMAPSAMReader(input_sam, True,
                                            query_len_dict=read_id_len_dict)]
     BCBio_GFF.write([record for record in records if record is not None],
-                    opened_output_gff)
+                    opened_gff)
 
 
-def sam_record_to_gff_record(sam_record, source: str = 'sgphasing_tmp'):
+def sam_record_to_gff_record(sam_record: GMAPSAMRecord,
+                             source: str = 'sgphasing_tmp') -> SeqRecord:
     """Convert sam record to gff3 record.
 
     Args:
-        sam_record: GMAPSAMRecord record.
+        sam_record (GMAPSAMRecord): BioReaders GMAPSAMRecord.
         source (str): gff3 source.
 
     Returns:
@@ -94,10 +96,9 @@ def sam_record_to_gff_record(sam_record, source: str = 'sgphasing_tmp'):
     for exon_id, exon in enumerate(sam_record.segments):
         exon_id_str = '{0}.exon{1}'.format(sam_record.qID, exon_id+1)
         exon_qual = {'source': source, 'ID': exon_id_str, 'Name': exon_id_str}
-        top_feature.sub_features.append(
-            SeqFeature(
-                FeatureLocation(exon.start, exon.end),
-                type='exon', strand=strand, qualifiers=exon_qual))
+        top_feature.sub_features.append(SeqFeature(
+            FeatureLocation(exon.start, exon.end),
+            type='exon', strand=strand, qualifiers=exon_qual))
 
     length = sum(exon.end - exon.start for exon in sam_record.segments)
     # DO NOT CARE since sequence is not written in GFF3

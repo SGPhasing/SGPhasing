@@ -13,15 +13,17 @@ Functions:
   - write_partial_gff
 """
 
+from io import TextIOWrapper
+
 
 def write_partial_gff(input_gff: str,
-                      opened_output_gff,
+                      opened_output_gff: TextIOWrapper,
                       iso_id_list: list) -> None:
     """Write gff for limit isoforms.
 
     Args:
-        input_gff: input fastx handle.
-        opened_output_gff: opened output gff handle.
+        input_gff (TextIOWrapper): input fastx handle.
+        opened_output_gff (TextIOWrapper): opened output gff handle.
         iso_id_list (list): limited isoforms id list.
     """
     with open(input_gff, 'r') as opened_input_gff:

@@ -15,17 +15,18 @@ Functions:
 """
 
 from gc import collect
+from io import TextIOWrapper
 
 from SGPhasing.Regions import Linked_Region, Region
 from SGPhasing.Regions import check_two_linked_regions
 from SGPhasing.Regions import merge_two_linked_regions
 
 
-def read_gff(opened_gff) -> dict:
+def read_gff(opened_gff: TextIOWrapper) -> dict:
     """Read gff file and extract region information.
 
     Args:
-        opened_gff: opened input gff handle.
+        opened_gff (TextIOWrapper): opened input gff handle.
 
     Returns:
         gene_id_linked_region (dict): gene_id as key and
