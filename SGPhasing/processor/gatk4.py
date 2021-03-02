@@ -16,7 +16,7 @@ Functions:
   - haplotype_caller
 """
 
-from subprocess import PIPE, Popen
+from subprocess import PIPE, Popen, STDOUT
 
 
 def create_sequence_dictionary(reference: str) -> str:
@@ -29,7 +29,7 @@ def create_sequence_dictionary(reference: str) -> str:
         (str): gatk4 print.
     """
     with Popen(['gatk', 'CreateSequenceDictionary', '--REFERENCE', reference],
-               stdout=PIPE) as proc:
+               stdout=PIPE, stderr=STDOUT) as proc:
         return proc.stdout.read().decode('utf-8')
 
 
@@ -54,7 +54,8 @@ def add_or_replace_read_groups(input_bam: str,
     """
     with Popen(['gatk', 'AddOrReplaceReadGroups', '--INPUT', input_bam,
                 '--OUTPUT', output_bam, '--RGLB', rglb, '--RGPL', rgpl,
-                '--RGPU', rgpu, '--RGSM', rgsm], stdout=PIPE) as proc:
+                '--RGPU', rgpu, '--RGSM', rgsm],
+               stdout=PIPE, stderr=STDOUT) as proc:
         return proc.stdout.read().decode('utf-8')
 
 
@@ -72,7 +73,7 @@ def left_align_indels(input_bam: str, output_bam: str, reference: str) -> str:
     with Popen(['gatk', 'LeftAlignIndels',
                 '--disable-tool-default-read-filters', 'true',
                 '--input', input_bam, '--output', output_bam,
-                '--reference', reference], stdout=PIPE) as proc:
+                '--reference', reference], stdout=PIPE, stderr=STDOUT) as proc:
         return proc.stdout.read().decode('utf-8')
 
 
@@ -109,5 +110,5 @@ def haplotype_caller(input_bam: str,
         '--dont-use-soft-clipped-bases', 'true',
         '--max-alternate-alleles', str(ploidy*2),
         '--pcr-indel-model', 'AGGRESSIVE']
-    with Popen(' '.join(args), stdout=PIPE, shell=True) as proc:
+    with Popen(' '.join(args), stdout=PIPE, stderr=STDOUT, shell=True) as proc:
         return proc.stdout.read().decode('utf-8')

@@ -14,7 +14,7 @@ Functions:
   - genomic_mapper
 """
 
-from subprocess import PIPE, Popen
+from subprocess import PIPE, Popen, STDOUT
 
 
 def splice_mapper(reference: str,
@@ -34,8 +34,9 @@ def splice_mapper(reference: str,
     """
     with Popen(['minimap2', '-k', '17', '-uf', '-a', '-o', output_sam,
                 '--MD', '-t', str(threads), '-x', 'splice:hq',
-                reference+'.mmi', input_fastx], stdout=PIPE) as proc:
-        return proc.stdout.read().decode('utf-8').strip()
+                reference+'.mmi', input_fastx],
+               stdout=PIPE, stderr=STDOUT) as proc:
+        return proc.stdout.read().decode('utf-8')
 
 
 def genomic_mapper(reference: str,
@@ -57,5 +58,5 @@ def genomic_mapper(reference: str,
     """
     with Popen(['minimap2', '-k', '17', '-a', '-o', output_sam,
                 '--MD', '-t', str(threads), '-x', preset,
-                reference, input_fastx], stdout=PIPE) as proc:
-        return proc.stdout.read().decode('utf-8').strip()
+                reference, input_fastx], stdout=PIPE, stderr=STDOUT) as proc:
+        return proc.stdout.read().decode('utf-8')

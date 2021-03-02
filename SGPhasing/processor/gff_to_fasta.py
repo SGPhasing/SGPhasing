@@ -13,7 +13,7 @@ Functions:
   - gff_to_fasta
 """
 
-from subprocess import PIPE, Popen
+from subprocess import PIPE, Popen, STDOUT
 
 
 def gff_to_fasta(input_gff: str,
@@ -30,5 +30,5 @@ def gff_to_fasta(input_gff: str,
         (str): gffread print.
     """
     with Popen(['gffread', input_gff, '-g', reference,
-                '-w', output_fasta], stdout=PIPE) as proc:
-        return proc.stdout.read().decode('utf-8').strip()
+                '-w', output_fasta], stdout=PIPE, stderr=STDOUT) as proc:
+        return proc.stdout.read().decode('utf-8')
