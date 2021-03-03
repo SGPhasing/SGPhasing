@@ -64,7 +64,7 @@ class Index(object):
         self.tmp_floder_path = Path(self.args.tmp)
         if not self.tmp_floder_path.is_dir():
             self.tmp_floder_path.mkdir()
-            self.output.info(f'Creating temporary folder at {self.args.tmp}.')
+            self.output.info(f'Creating temporary folder at {self.args.tmp}')
         self.opened_log_file = (
             self.tmp_floder_path / 'sgphasing.log').open('w')
         read_fastx.check_index(self.args.reference, self.args.threads)
@@ -151,7 +151,7 @@ class Index(object):
         """Get linked region for each primary region."""
         self.primary_sam_path = (self.tmp_floder_path /
                                  'primary.minimap2_reference.sam')
-        self.output.info('Running minimap2')
+        self.output.info(f'Running minimap2 with {self.args.threads} threads')
         if self.args.verbose:
             self.output.info(splice_mapper(
                 self.args.reference, str(self.primary_fasta_path),

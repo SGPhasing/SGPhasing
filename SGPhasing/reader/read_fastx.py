@@ -48,7 +48,7 @@ def open_fastx(input_fastx: str) -> tuple:
         input_format = 'fasta'
     else:
         output = Output()
-        output.error('input error: input format must be '
+        output.error('Input error: input format must be '
                      'fastq, fasta, fq, fa, or gzipped file.')
         exit()
     return opened_fastx, input_format
@@ -65,7 +65,7 @@ def check_index(reference: str, threads: int = 1) -> None:
     index_path = Path(index_file)
     if not index_path.exists():
         output = Output()
-        output.info('Preparing genome index for minimap2.')
+        output.info('Preparing genome index for minimap2')
         opened_aligner = mp.Aligner(reference, preset='splice:hq',
                                     k=17, best_n=100,
                                     n_threads=threads, fn_idx_out=index_file)
