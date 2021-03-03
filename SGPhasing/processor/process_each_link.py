@@ -13,14 +13,15 @@ Functions:
   - process_each_link
 """
 
+from SGPhasing.indexer.thread import thread_haplotypes
 from SGPhasing.processor.gatk4 import add_or_replace_read_groups
 from SGPhasing.processor.gatk4 import create_sequence_dictionary
 from SGPhasing.processor.gatk4 import haplotype_caller
 from SGPhasing.processor.gatk4 import left_align_indels
 from SGPhasing.processor.gff_to_fasta import gff_to_fasta
 from SGPhasing.processor.minimap2 import genomic_mapper
-from SGPhasing.reader import read_fastx, read_xam
-from SGPhasing.writer import write_fastx, write_xam
+from SGPhasing.reader import read_fastx, read_vcf, read_xam
+from SGPhasing.writer import write_fastx, write_tsv, write_xam
 
 
 def process_each_link(args_tuple: tuple) -> None:
@@ -63,6 +64,7 @@ def process_each_link(args_tuple: tuple) -> None:
         link_floder_path / 'expanded_primary.reference.fasta')
     opened_gffread_log.write(gff_to_fasta(
         opened_expand_gff.name, reference, str(expand_fasta_path)))
+    opened_gffread_log.close()
 
     link_reads_set = set()
     opened_index_xam, index_xam_format = read_xam.open_xam(index_xam)
@@ -94,6 +96,7 @@ def process_each_link(args_tuple: tuple) -> None:
     opened_minimap2_log.write(genomic_mapper(
         str(expand_fasta_path), str(index_fastx_path),
         str(index_expand_sam_path), 'asm20', threads))
+    opened_minimap2_log.close()
 
     link_expand_bam_path = (
         link_floder_path / 'linked_region.reference.minimap2_expand.bam')
@@ -128,13 +131,36 @@ def process_each_link(args_tuple: tuple) -> None:
         str(index_expand_group_bam_path), str(index_expand_lalign_bam_path),
         str(expand_fasta_path)))
 
+    ploidy = len(linked_region.Secondary_Regions_list) + 1
     index_expand_vcf_path = (
         link_floder_path / 'linked_region.index.minimap2_expand.hapcal.vcf')
     opened_gatk4_log.write(haplotype_caller(
         str(index_expand_lalign_bam_path), str(index_expand_vcf_path),
-        str(expand_fasta_path), len(link_reads_set), 20,
-        len(linked_region.Secondary_Regions_list)+1, threads))
-
-    opened_gffread_log.close()
-    opened_minimap2_log.close()
+        str(expand_fasta_path), len(link_reads_set), 20, ploidy, threads))
     opened_gatk4_log.close()
+
+    positions_list = read_vcf.get_alt_positions(
+        str(index_expand_vcf_path), ploidy)
+    if positions_list:
+        link_reads_id_list, link_reads_bases_matrix = (
+            read_xam.extract_read_matrix(
+                str(link_expand_lalign_bam_path), positions_list))
+        link_expand_reads_bases_matrix_path = (
+            link_floder_path / 'linked_region.reference.reads_bases.tsv')
+        write_tsv.write_reads_bases_matrix(
+            str(link_expand_reads_bases_matrix_path), positions_list,
+            link_reads_id_list, link_reads_bases_matrix)
+        index_reads_id_list, index_reads_bases_matrix = (
+            read_xam.extract_read_matrix(
+                str(index_expand_lalign_bam_path), positions_list))
+        index_expand_reads_bases_matrix_path = (
+            link_floder_path / 'linked_region.index.reads_bases.tsv')
+        write_tsv.write_reads_bases_matrix(
+            str(index_expand_reads_bases_matrix_path), positions_list,
+            index_reads_id_list, index_reads_bases_matrix)
+
+        (clusters_indexes_array, sample_cluster_indexes,
+         new_prototypes_array) = thread_haplotypes(
+            link_reads_bases_matrix, index_reads_bases_matrix)
+    else:
+        return None
