@@ -56,7 +56,7 @@ def sam_record_to_gff_record(sam_record: GMAPSAMRecord,
         source (str): gff3 source.
 
     Returns:
-        gff_record: SeqRecord ready to be written as GFF3.
+        gff_record (SeqRecord): SeqRecord ready to be written as GFF3.
     """
     if sam_record.sID == '*':
         print(f'Skipping {sam_record.qID} because unmapped.', file=stderr)

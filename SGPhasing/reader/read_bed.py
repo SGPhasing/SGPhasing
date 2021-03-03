@@ -38,7 +38,7 @@ def open_bed(input_bed: str) -> dict:
 
 
 def merge_region(chr_region: dict) -> dict:
-    """Merge overlap regions.
+    """Merge overlapped regions.
 
     Args:
         chr_region (dict): chrom as key and region list as value.
@@ -54,7 +54,7 @@ def unfold_region(region_list: list) -> set:
     """Turn region_list into position_set.
 
     Args:
-        region_list (list): the elements are (start, end) tuple.
+        region_list (list): (start, end) tuple list for each region.
 
     Returns:
         position_set (set): set of positions.
@@ -72,7 +72,7 @@ def fold_region(position_set: set) -> list:
         position_set (set): set of positions.
 
     Returns:
-        region_list (list): the elements are (start, end) tuple.
+        region_list (list): (start, end) tuple list for each region.
     """
     region_list = []
     sorted_pos = sorted(position_set)

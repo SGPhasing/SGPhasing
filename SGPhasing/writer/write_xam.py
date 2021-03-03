@@ -26,7 +26,8 @@ def write_partial_sam(opened_input_xam: pysam.AlignmentFile,
     """Write sam for limit region and reads.
 
     Args:
-        opened_input_xam (pysam.AlignmentFile): pysam open format.
+        opened_input_xam (AlignmentFile): input pysam opened
+                                          bam/sam file handle.
         output_sam (str): output sam file path string.
         limit_region_dict (dict): chrom as key and region list as value.
         limit_reads_set (set): limited reads id set.

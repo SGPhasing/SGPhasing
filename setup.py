@@ -46,10 +46,10 @@ class Environment(object):
     """The current install environment.
 
     Attributes:
-        output: Output info, warning and error.
-        is_installer (bool): Whether to enter the installer mode.
-        missing_packages (list): Missing packages from current environment.
-        conda_missing_packages (list): Missing packages from current
+        output (Output): output info, warning and error.
+        is_installer (bool): whether to enter the installer mode.
+        missing_packages (list): missing packages from current environment.
+        conda_missing_packages (list): missing packages from current
                                        conda environment.
     """
 
@@ -94,12 +94,12 @@ class Environment(object):
 
     @property
     def os_version(self) -> tuple:
-        """Get OS Verion."""
+        """Get OS Version."""
         return platform.system(), platform.release()
 
     @property
     def py_version(self):
-        """Get Python Verion."""
+        """Get Python Version."""
         return platform.python_version(), platform.architecture()[0]
 
     @property
@@ -238,15 +238,15 @@ class Install(object):
     """Install the requirements.
 
     Attributes:
-        output: Output info, warning and error.
-        env: Environment.
+        output: output info, warning and error.
+        env: environment.
     """
 
     def __init__(self, environment: Environment) -> None:
         """Initialize an Install.
 
         Args:
-            environment (Environment): Store an environment.
+            environment (Environment): store an environment.
         """
         self.output = Output()
         self.env = environment

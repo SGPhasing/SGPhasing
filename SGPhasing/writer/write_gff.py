@@ -24,7 +24,7 @@ def write_partial_gff(input_gff: str,
     Args:
         input_gff (TextIOWrapper): input fastx handle.
         opened_output_gff (TextIOWrapper): opened output gff handle.
-        iso_id_list (list): limited isoforms id list.
+        iso_id_list (list): limited isoforms id in list.
     """
     with open(input_gff, 'r') as opened_input_gff:
         for eachline in opened_input_gff:

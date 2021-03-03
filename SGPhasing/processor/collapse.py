@@ -34,7 +34,7 @@ def collapse_isoforms_by_sam(input_sam: str,
 
     Returns:
         gff_path (str): primary_reference.collapsed.gff file path string.
-        most_iso_id_list (list): most supported isoforms id list.
+        most_iso_id_list (list): most supported isoforms id in list.
     """
     opened_gff = (tmp_dir/'primary_reference.collapsed.gff').open('w')
     opened_group = (tmp_dir/'primary_reference.collapsed.group.txt').open('w')
@@ -62,11 +62,11 @@ def get_most_supported_isoforms(input_group: str) -> list:
     """Get most supported isoforms.
 
     Args:
-        input_group (str): primary_reference.collapsed.group.txt
+        input_group (str): input primary_reference.collapsed.group.txt
                            file path string.
 
     Returns:
-        most_iso_id_list (list): most supported isoforms id list.
+        most_iso_id_list (list): most supported isoforms id in list.
     """
     most_iso_id_list = []
     gene_iso_flncnum_dict = {}
