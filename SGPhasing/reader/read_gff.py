@@ -63,20 +63,20 @@ def read_gff(opened_gff: TextIOWrapper) -> dict:
     merged_linked_region, repeat_id_set = {}, set()
     gene_id_list = list(gene_id_linked_region.keys())
     genes_num = len(gene_id_list)
-    for id1, gene_id in enumerate(gene_id_list):
-        for id2 in range(id1+1, genes_num):
-            linked_region1 = gene_id_linked_region.get(gene_id_list[id1])
-            linked_region2 = gene_id_linked_region.get(gene_id_list[id2])
+    for index1, gene_id in enumerate(gene_id_list):
+        for index2 in range(index1+1, genes_num):
+            linked_region1 = gene_id_linked_region.get(gene_id_list[index1])
+            linked_region2 = gene_id_linked_region.get(gene_id_list[index2])
             if check_two_linked_regions(linked_region1, linked_region2):
-                if id1 in repeat_id_set:
+                if index1 in repeat_id_set:
                     merged_linked_region.update({
-                        gene_id_list[id2]: merge_two_linked_regions(
+                        gene_id_list[index2]: merge_two_linked_regions(
                             linked_region2, linked_region1)})
                 else:
                     merged_linked_region.update({
                         gene_id: merge_two_linked_regions(
                             linked_region1, linked_region2)})
-                    repeat_id_set.add(id2)
+                    repeat_id_set.add(index2)
     for id in repeat_id_set:
         del gene_id_linked_region[gene_id_list[id]]
     gene_id_linked_region.update(merged_linked_region)
