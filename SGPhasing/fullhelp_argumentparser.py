@@ -73,12 +73,13 @@ class ScriptExecutor(object):
         """Initialize ScriptExecutor.
 
         Args:
-            command (str): Full commands.
-            subparsers: Subparsers for each subcommand.
+            command (str): full commands.
+            subparsers: subparsers for each subcommand, default None.
         """
         self.command = command.lower()
         self.subparsers = subparsers
         self.output = Output()
+        super().__init__()
 
     def import_script(self):
         """Only import a script's modules when running that script."""
@@ -118,7 +119,11 @@ class FullHelpArgumentParser(ArgumentParser):
     """
 
     def error(self, message: str) -> None:
-        """Print full help messages."""
+        """Print full help messages.
+
+        Args:
+            message (str): message for args.
+        """
         self.print_help(stderr)
         args = {'prog': self.prog, 'message': message}
         self.exit(2, f'{self.prog}: error: {message}\n')
@@ -136,17 +141,18 @@ class SmartFormatter(HelpFormatter):
     Adapted from: https://stackoverflow.com/questions/3853722
     """
 
-    def __init__(self, prog: str,
+    def __init__(self,
+                 prog: str,
                  indent_increment: int = 2,
                  max_help_position: int = 24,
                  width=None) -> None:
         """Initialize SmartFormatter.
 
         Args:
-            prog (str): Program name.
-            indent_increment (int): Indent increment. default 2.
-            max_help_position (int): Max help position. default 24.
-            width: Width.
+            prog (str): program name.
+            indent_increment (int): indent increment. default 2.
+            max_help_position (int): max help position. default 24.
+            width: width, default None.
         """
         super().__init__(prog, indent_increment, max_help_position, width)
         self._whitespace_matcher_limited = compile(r'[ \r\f\v]+', ASCII)
@@ -179,15 +185,18 @@ class SGPhasingArgs(object):
         parser: Parser.
     """
 
-    def __init__(self, subparser, command: str,
-                 description: str = 'default', subparsers=None) -> None:
+    def __init__(self,
+                 subparser,
+                 command: str,
+                 description: str = 'default',
+                 subparsers=None) -> None:
         """Initialize SGPhasingArgs.
 
         Args:
-            subparser: Subparser.
-            command (str): Command.
-            description (str): Description. default 'default'.
-            subparsers: Subparsers.
+            subparser: subparser.
+            command (str): command.
+            description (str): description. default 'default'.
+            subparsers: subparsers, default None.
         """
         self.global_arguments = self.get_global_arguments()
         self.argument_list = self.get_argument_list()
@@ -198,6 +207,7 @@ class SGPhasingArgs(object):
         self.add_arguments()
         script = ScriptExecutor(command, subparsers)
         self.parser.set_defaults(func=script.execute_script)
+        super().__init__()
 
     @staticmethod
     def get_argument_list() -> list:
@@ -229,7 +239,12 @@ class SGPhasingArgs(object):
 
     @staticmethod
     def create_parser(subparser, command: str, description: str):
-        """Create the parser for the selected command."""
+        """Create the parser for the selected command.
+
+        Args:
+            command (str): command string.
+            description (str): description string.
+        """
         parser = subparser.add_parser(
             command,
             help=description,
@@ -251,7 +266,9 @@ class SGPhasingArgs(object):
 
 
 class IndexArgs(SGPhasingArgs):
-    """Use full-length HiFi sequences to build snv/indel index for phasing."""
+    """Index with alleles of high quality full-length
+        transcriptome sequences.
+    """
 
     @staticmethod
     def get_argument_list() -> list:

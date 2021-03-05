@@ -80,6 +80,7 @@ class Environment(object):
         self.get_installed_packages()
         self.get_installed_conda_packages()
         self.get_required_packages()
+        super().__init__()
 
     @property
     def is_admin(self) -> bool:
@@ -100,7 +101,7 @@ class Environment(object):
         return platform.system(), platform.release()
 
     @property
-    def py_version(self):
+    def py_version(self) -> tuple:
         """Get Python Version."""
         return platform.python_version(), platform.architecture()[0]
 
@@ -111,7 +112,7 @@ class Environment(object):
         Returns:
             (bool)
         """
-        return bool('conda' in sys.version.lower())
+        return 'conda' in sys.version.lower()
 
     @property
     def is_virtualenv(self) -> bool:
@@ -126,7 +127,7 @@ class Environment(object):
                        sys.base_prefix != sys.prefix))
         else:
             prefix = os.path.dirname(sys.prefix)
-            retval = (os.path.basename(prefix) == 'envs')
+            retval = os.path.basename(prefix) == 'envs'
         return retval
 
     @property
@@ -153,7 +154,7 @@ class Environment(object):
         self.output.info('The tool provides tips for installation\n'
                          'and installs required python packages')
         self.output.info(f'Setup in {self.os_version[0]} {self.os_version[1]}')
-        if not self.os_version[0] in ['Windows', 'Linux', 'Darwin']:
+        if not self.os_version[0] in ['Linux', 'Darwin']:
             self.output.error(
                 f'Your system {self.os_version[0]} is not supported!')
             sys.exit(1)
@@ -260,6 +261,7 @@ class Install(object):
         self.output.info('All python3 dependencies are met.\r\n'
                          'You are good to go.\r\n\r\n'
                          'Enter:  python sgphasing.py -h to see the options')
+        super().__init__()
 
     def ask_continue(self) -> None:
         """Ask Continue with Install."""
@@ -317,14 +319,21 @@ class Install(object):
             channel = '' if len(pkg) != 2 else pkg[1]
             self.conda_installer(pkg[0], channel=channel, conda_only=True)
 
-    def conda_installer(self, package: str,
+    def conda_installer(self,
+                        package: str,
                         channel: str = '',
                         verbose: bool = False,
                         conda_only: bool = False) -> bool:
         """Install a conda package.
 
+        Args:
+            package (str): package name string.
+            channel (str): channel name string, default ''.
+            verbose (bool): verbose, default False.
+            conda_only (bool): if conda only, default False.
+
         Returns:
-            success (bool)
+            success (bool): if success.
         """
         success = True
         condaexe = ['conda', 'install', '-y']
@@ -351,14 +360,22 @@ class Install(object):
         return success
 
     def install_python_packages(self, verbose: bool = False) -> None:
-        """Install required pip packages."""
+        """Install required pip packages.
+
+        Args:
+            verbose (bool): verbose, default False.
+        """
         self.output.info(
             'Installing Required Python Packages. This may take some time...')
         for pkg in self.env.missing_packages:
             self.pip_installer(pkg)
 
     def pip_installer(self, package: str) -> None:
-        """Install a pip package."""
+        """Install a pip package.
+
+        Args:
+            package (str): package name string.
+        """
         pipexe = [sys.executable, '-m', 'pip']
         # hide info/warning and fix cache hang
         pipexe.extend(['install', '-qq', '--no-cache-dir'])
