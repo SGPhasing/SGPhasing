@@ -21,7 +21,8 @@ import numpy as np
 
 
 def thread_haplotypes(ref_reads_bases_matrix: list,
-                      index_reads_bases_matrix: list) -> tuple:
+                      index_reads_bases_matrix: list,
+                      bases_num: int) -> tuple:
     """Threads haplotypes through the clusters.
 
     Args:
@@ -34,30 +35,32 @@ def thread_haplotypes(ref_reads_bases_matrix: list,
         new_prototypes_array (list): prototype array for each cluster.
     """
     ref_reads_bases_indexes, ref_reads_bases_array = onehot_encode(
-        ref_reads_bases_matrix)
+        ref_reads_bases_matrix, True)
     index_reads_bases_indexes, index_reads_bases_array = onehot_encode(
         index_reads_bases_matrix)
 
     clusters_indexes_array, sample_cluster_indexes = [], []
     new_prototypes_array = []
-    prototypes_array = ref_reads_bases_array
+    prototypes_array = ref_reads_bases_array[::]
     if_converge = False
     while not if_converge:
         clusters_indexes_array, sample_cluster_indexes = distance_cluster(
             prototypes_array, index_reads_bases_array,
             index_reads_bases_indexes)
         new_prototypes_array = update_prototype(
-            clusters_indexes_array, len(ref_reads_bases_matrix[0]))
+            clusters_indexes_array, prototypes_array, bases_num)
         if_converge = np.all(
             np.array(new_prototypes_array) == np.array(prototypes_array))
+        prototypes_array = new_prototypes_array[::]
     return clusters_indexes_array, sample_cluster_indexes, new_prototypes_array
 
 
-def onehot_encode(reads_bases_matrix: list) -> tuple:
+def onehot_encode(reads_bases_matrix: list, padding: bool = False) -> tuple:
     """Convert reads bases to one-hot matrix.
 
     Args:
         reads_bases_matrix (list): bases matrix for each read.
+        padding (pool): if padding null value bases.
 
     Returns:
         reads_bases_indexes (list): bases index for each read.
@@ -87,6 +90,9 @@ def onehot_encode(reads_bases_matrix: list) -> tuple:
             if base:
                 base_indexes.append(base_id)
                 base_array.append(ONE_HOT[base])
+            elif padding:
+                base_indexes.append(base_id)
+                base_array.append([0., 0., 0., 0., 0.])
         reads_bases_indexes.append(base_indexes)
         reads_bases_array.append(np.array(base_array, dtype=np.float16))
     return reads_bases_indexes, reads_bases_array
@@ -119,11 +125,14 @@ def distance_cluster(prototypes_array: list,
     return clusters_indexes_array, sample_cluster_indexes
 
 
-def update_prototype(clusters_indexes_array: list, bases_num: int) -> list:
+def update_prototype(clusters_indexes_array: list,
+                     prototypes_array: list,
+                     bases_num: int) -> list:
     """Calculate new prototype array for each cluster.
 
     Args:
         clusters_indexes_array (list): [indexes, array] list for each cluster.
+        prototypes_array (list): prototype array for each cluster.
         bases_num (int): prototype array bases number.
 
     Returns:
@@ -144,8 +153,8 @@ def update_prototype(clusters_indexes_array: list, bases_num: int) -> list:
             if base_count:
                 new_prototype_array[base_id] = base_array / base_count
             else:
-                new_prototype_array[base_id] = clusters_indexes_array[
-                    cluster_id][base_id]
+                new_prototype_array[base_id] = prototypes_array[
+                    cluster_id][base_id][::]
         new_prototypes_array.append(hardmax(new_prototype_array))
     return new_prototypes_array
 

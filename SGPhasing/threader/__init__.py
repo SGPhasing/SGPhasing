@@ -7,7 +7,7 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""Initialize the processor package.
+"""Initialize the threader package.
 
 The SGPhasing Project is an international association of developers
 of freely available Python tools for Phasing sequences of Similar Genes.
