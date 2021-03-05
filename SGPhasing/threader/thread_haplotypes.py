@@ -60,7 +60,7 @@ def onehot_encode(reads_bases_matrix: list, padding: bool = False) -> tuple:
 
     Args:
         reads_bases_matrix (list): bases matrix for each read.
-        padding (pool): if padding null value bases.
+        padding (pool): if padding null value bases, default False.
 
     Returns:
         reads_bases_indexes (list): bases index for each read.

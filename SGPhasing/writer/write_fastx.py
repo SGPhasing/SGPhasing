@@ -25,7 +25,7 @@ def write_partial_fastx(opened_input_fastx: TextIOWrapper,
     Args:
         opened_input_fastx (TextIOWrapper): opened input fastx handle.
         opened_output_fastx (TextIOWrapper): opened output fastx handle.
-        fastx_format (str): input fastx file format.
+        fastx_format (str): input fasta/q file format.
         limit_reads_set (set): limited reads id set.
     """
     if fastx_format == 'fastq':

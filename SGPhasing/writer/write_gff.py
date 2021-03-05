@@ -22,7 +22,7 @@ def write_partial_gff(input_gff: str,
     """Write gff for limit isoforms.
 
     Args:
-        input_gff (TextIOWrapper): input fastx handle.
+        input_gff (str): input gff file path string.
         opened_output_gff (TextIOWrapper): opened output gff handle.
         iso_id_list (list): limited isoforms id in list.
     """

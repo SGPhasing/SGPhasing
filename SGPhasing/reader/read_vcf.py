@@ -22,7 +22,7 @@ def get_alt_positions(input_vcf: str, ploidy: int) -> list:
         ploidy (int): ploidy number.
 
     Returns:
-        positions_list (dict): positions list.
+        positions_list (list): positions list.
     """
     min_freq = 0.5 / ploidy
     max_freq = 1 - min_freq

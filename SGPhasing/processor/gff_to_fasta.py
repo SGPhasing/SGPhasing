@@ -23,7 +23,7 @@ def gff_to_fasta(input_gff: str,
 
     Args:
         input_gff (str): input gff3 file path string.
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
         output_fasta (str): output fasta file path string.
 
     Returns:

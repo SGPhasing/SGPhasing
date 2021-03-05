@@ -24,10 +24,10 @@ def splice_mapper(reference: str,
     """Call minimap2 for splice mapping.
 
     Args:
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
         input_fastx (str): input sequences fasta/q file path string.
         output_sam (str): output sam file path string.
-        threads (int): threads using for minimap2, default = 1.
+        threads (int): threads using for minimap2, default 1.
 
     Returns:
         (str): minimap2 print.
@@ -47,11 +47,11 @@ def genomic_mapper(reference: str,
     """Call minimap2 for genomic mapping.
 
     Args:
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
         input_fastx (str): input sequences fasta/q file path string.
         output_sam (str): output sam file path string.
         preset (str): minimap2 preset.
-        threads (int): threads using for minimap2, default = 1.
+        threads (int): threads using for minimap2, default 1.
 
     Returns:
         (str): minimap2 print.

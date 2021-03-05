@@ -58,8 +58,8 @@ def check_index(reference: str, threads: int = 1) -> None:
     """Build index for minimap2 if not exists.
 
     Args:
-        reference (str): input reference fasta file path str.
-        threads (int): threads using for mappy to index, default = 1.
+        reference (str): reference fasta file path string.
+        threads (int): threads using for mappy to index, default 1.
     """
     index_file = reference + '.mmi'
     index_path = Path(index_file)

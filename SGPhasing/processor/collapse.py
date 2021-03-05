@@ -30,7 +30,7 @@ def collapse_isoforms_by_sam(input_sam: str,
         input_sam (str): input sam file path string.
         input_fastx (str): input fasta/q file path string.
         is_fq (bool): input_fastx is in fastq format,
-        tmp_dir (PosixPath): temporary folder PosixPath.
+        tmp_dir (Path): temporary folder Path.
 
     Returns:
         gff_path (str): primary_reference.collapsed.gff file path string.

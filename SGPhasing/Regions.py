@@ -58,7 +58,7 @@ class Region(object):
             start (int): region start position.
             end (int): region end position.
             strand (str): '+' or '-'.
-            info (str): gff3 9th column string.
+            info (str): gff3 9th column string, default ''.
         """
         self.chrom = chrom
         self.start = start
@@ -107,7 +107,7 @@ class Region(object):
         """Update information id for this region.
 
         Args:
-            new_id (str): new id.
+            new_id (str): new id string.
         """
         self.info = update_info_str_id(self.info, new_id)
         for child_id, each_child in enumerate(self.child_list):
@@ -173,7 +173,7 @@ class Linked_Region(object):
         """Update information id for all regions in Linked_Region.
 
         Args:
-            new_id (str): new id prefixion.
+            new_id (str): new id prefixion string.
         """
         self.Primary_Region.update_info_id(new_id+'.0')
         for region_id in range(len(self.Secondary_Regions_list)):
@@ -195,7 +195,7 @@ class Linked_Region(object):
         """Extend primary region by the length.
 
         Args:
-            length (int): primary region extended length.
+            length (int): primary region extended length, default 1000.
         """
         new_region = self.Primary_Region.copy()
         new_region.start -= length
@@ -226,7 +226,7 @@ def merge_two_linked_regions(Linked_Region1: Linked_Region,
         Linked_Region1 (Linked_Region): first Linked_Region for merging.
         Linked_Region2 (Linked_Region): second Linked_Region for merging.
         threshold_coverage (float): threshold coverage for merging,
-                                    default = 0.5.
+                                    default 0.5.
 
     Returns:
         Linked_Region (Linked_Region): merged linked region.
@@ -251,7 +251,7 @@ def check_two_linked_regions(Linked_Region1: Linked_Region,
         Linked_Region1 (Linked_Region): first Linked_Region for checking.
         Linked_Region2 (Linked_Region): second Linked_Region for checking.
         threshold_coverage (float): threshold coverage for checking,
-                                    default = 0.5.
+                                    default 0.5.
 
     Returns:
         (bool): whether two linked regions have overlap.
@@ -289,7 +289,7 @@ def update_info_str_id(info_str: str, new_id: str) -> str:
 
     Args:
         info_str (str): information string.
-        new_id (str): new id.
+        new_id (str): new id string.
 
     Returns:
         (str): updated information string.

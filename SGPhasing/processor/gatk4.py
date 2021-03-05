@@ -23,7 +23,7 @@ def create_sequence_dictionary(reference: str) -> str:
     """Call gatk4 for creating sequence dictionary.
 
     Args:
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
 
     Returns:
         (str): gatk4 print.
@@ -65,7 +65,7 @@ def left_align_indels(input_bam: str, output_bam: str, reference: str) -> str:
     Args:
         input_bam (str): input bam file path string.
         output_bam (str): output bam file path string.
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
 
     Returns:
         (str): gatk4 print.
@@ -89,11 +89,11 @@ def haplotype_caller(input_bam: str,
     Args:
         input_bam (str): input bam file path string.
         output_vcf (str): output vcf file path string.
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
         max_reads (int): max reads number for --max-reads-per-alignment-start.
         min_quality (int): min quality number for --min-base-quality-score.
         ploidy (int): ploidy number for --sample-ploidy.
-        threads (int): threads using for IntelPairHmm.
+        threads (int): threads using for IntelPairHmm, default 1.
 
     Returns:
         (str): gatk4 print.

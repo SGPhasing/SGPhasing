@@ -33,7 +33,7 @@ def sam_to_gff(input_sam: str,
     Args:
         input_sam (str): input sam file path string.
         opened_gff (TextIOWrapper): opened output gff3 file handle.
-        input_fasta (str): input reads fasta file.
+        input_fasta (str): input reads fasta file, default ''.
     """
     read_id_len_dict = {}
     if input_fasta:
@@ -53,7 +53,7 @@ def sam_record_to_gff_record(sam_record: GMAPSAMRecord,
 
     Args:
         sam_record (GMAPSAMRecord): BioReaders GMAPSAMRecord.
-        source (str): gff3 source.
+        source (str): gff3 source, default 'sgphasing_tmp'.
 
     Returns:
         gff_record (SeqRecord): SeqRecord ready to be written as GFF3.

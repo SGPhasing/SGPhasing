@@ -27,12 +27,12 @@ def process_each_link(args_tuple: tuple) -> None:
 
     Args:
         link_id (str): linked_region id.
-        linked_region (Linked_Region): linked_region.
-        tmp_dir (PosixPath): temporary folder PosixPath.
-        reference (str): input reference fasta file path string.
+        linked_region (Linked_Region): linked region.
+        tmp_dir (Path): temporary folder Path.
+        reference (str): reference fasta file path string.
         index_xam (str): input high quality bam/cram file for indexing.
         index_fastx (str): input high quality fasta/q file for indexing.
-        threads (int): threads using for minimap2, default = 1.
+        threads (int): threads using for minimap2, pysam and gatk4, default 1.
     """
     (link_id, linked_region, tmp_dir,
      reference, index_xam, index_fastx, threads) = args_tuple

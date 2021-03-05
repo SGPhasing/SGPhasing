@@ -32,7 +32,7 @@ def open_xam(input_xam: str) -> tuple:
         input_xam (str): input sam or bam file path string.
 
     Returns:
-        xamfile (pysam.AlignmentFile): pysam open format.
+        xamfile (AlignmentFile): pysam opened cram/bam/sam file handle.
         input_format (str): return input_xam format, sam or bam.
     """
     if input_xam.endswith('cram'):
@@ -57,7 +57,7 @@ def check_index(input_xam: str, threads: int = 1) -> str:
 
     Args:
         input_xam (str): input sam or bam file path string.
-        threads (int): threads using for pysam sort and index, default = 1.
+        threads (int): threads using for pysam sort and index, default 1.
     """
     xamfile, input_format = open_xam(input_xam)
     try:
@@ -90,7 +90,7 @@ def extract_read_matrix(input_bam: str, positions_list: list) -> tuple:
 
     Args:
         input_bam (str): input bam file path string.
-        positions_list (list): input position list for each base..
+        positions_list (list): position list for each base.
 
     Returns:
         reads_id_list (list): extracted read_id list for each read.
@@ -144,8 +144,8 @@ def check_flag(read: pysam.AlignedSegment, flag: int) -> bool:
     """Check read if contain the flag.
 
     Args:
-        read (pysam.AlignedSegment): input a read pysam.AlignedSegment.
-        flag (int): input a flag.
+        read (AlignedSegment): read in pysam.AlignedSegment type.
+        flag (int): flag.
 
     Returns:
         has_flag (bool): read has the flag or not.
@@ -166,7 +166,7 @@ def read_to_fastq(read: pysam.AlignedSegment) -> str:
     """Turn a pysam read to fastq 4 lines string.
 
     Args:
-        read (pysam.AlignedSegment): input a read pysam.AlignedSegment.
+        read (AlignedSegment): read in pysam.AlignedSegment type.
 
     Returns:
         read (str): read has the flag or not.

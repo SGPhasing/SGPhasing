@@ -69,9 +69,9 @@ def sam_to_bam(input_sam: str,
 
     Args:
         input_sam (str): input sam file path string.
-        reference (str): input reference fasta file path string.
+        reference (str): reference fasta file path string.
         output_bam (str): output bam file path string.
-        threads (int): threads using for pysam.sort, default = 1.
+        threads (int): threads using for pysam.sort, default 1.
     """
     pysam.sort('-o', output_bam, '--output-fmt', 'BAM',
                '--reference', reference, '--threads', str(threads), input_sam)
