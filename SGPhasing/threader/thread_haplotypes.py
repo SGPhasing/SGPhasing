@@ -11,7 +11,8 @@
 
 Functions:
   - thread_haplotypes
-  - onehot_encode
+  - onehot_encoder
+  - onehot_decoder
   - distance_cluster
   - update_prototype
   - hardmax
@@ -34,9 +35,9 @@ def thread_haplotypes(ref_reads_bases_matrix: list,
         sample_cluster_indexes (list): cluster index for each sample.
         new_prototypes_array (list): prototype array for each cluster.
     """
-    ref_reads_bases_indexes, ref_reads_bases_array = onehot_encode(
+    ref_reads_bases_indexes, ref_reads_bases_array = onehot_encoder(
         ref_reads_bases_matrix, True)
-    index_reads_bases_indexes, index_reads_bases_array = onehot_encode(
+    index_reads_bases_indexes, index_reads_bases_array = onehot_encoder(
         index_reads_bases_matrix)
 
     clusters_indexes_array, sample_cluster_indexes = [], []
@@ -55,8 +56,8 @@ def thread_haplotypes(ref_reads_bases_matrix: list,
     return clusters_indexes_array, sample_cluster_indexes, new_prototypes_array
 
 
-def onehot_encode(reads_bases_matrix: list, padding: bool = False) -> tuple:
-    """Convert reads bases to one-hot matrix.
+def onehot_encoder(reads_bases_matrix: list, padding: bool = False) -> tuple:
+    """Convert reads bases matrix to one-hot array.
 
     Args:
         reads_bases_matrix (list): bases matrix for each read.
@@ -96,6 +97,28 @@ def onehot_encode(reads_bases_matrix: list, padding: bool = False) -> tuple:
         reads_bases_indexes.append(base_indexes)
         reads_bases_array.append(np.array(base_array, dtype=np.float16))
     return reads_bases_indexes, reads_bases_array
+
+
+def onehot_decoder(prototypes_array: list) -> list:
+    """Convert one-hot array to prototypes bases matrix.
+
+    Args:
+        prototypes_array (list): prototype array for each cluster.
+
+    Returns:
+        prototypes_bases_matrix (list): bases matrix for each cluster.
+    """
+    ONE_HOT = {
+        0: 'A',
+        1: 'C',
+        2: 'G',
+        3: 'T',
+        4: '-'}
+    prototypes_bases_matrix = []
+    for prototype_array in prototypes_array:
+        prototypes_bases_matrix.append(
+            [ONE_HOT[np.argmax(base_array)] for base_array in prototype_array])
+    return prototypes_bases_matrix
 
 
 def distance_cluster(prototypes_array: list,
