@@ -63,8 +63,10 @@ class Environment(object):
                                         ('mappy', 'bioconda'),
                                         ('minimap2', 'bioconda'),
                                         ('numpy',),
+                                        ('pandas',),
                                         ('pysam', 'bioconda'),
-                                        ('rich', 'conda-forge')]
+                                        ('rich', 'conda-forge'),
+                                        ('vaex', 'conda-forge')]
         self.missing_packages = []
         self.conda_missing_packages = []
 

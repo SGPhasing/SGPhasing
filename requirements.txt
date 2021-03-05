@@ -4,5 +4,7 @@ gatk4
 mappy
 minimap2
 numpy
+pandas
 pysam
 rich
+vaex
