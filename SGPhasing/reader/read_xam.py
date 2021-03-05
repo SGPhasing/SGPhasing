@@ -13,6 +13,7 @@ Functions:
   - open_xam
   - check_index
   - extract_read_matrix
+  - remove_blank
   - check_flag
   - read_to_fastq
 """
@@ -97,33 +98,46 @@ def extract_read_matrix(input_bam: str, positions_list: list) -> tuple:
     """
     reads_bases_matrix, reads_id_list = [], []
     opened_bam = pysam.AlignmentFile(input_bam, 'rb')
-    alt_num = len(positions_list)
+    bases_num = len(positions_list)
     for read_index, read in enumerate(opened_bam.fetch()):
         read_id = read.query_name
         reads_id_list.append(read_id)
-        reads_bases_matrix.append(['' for alt_id in range(alt_num)])
-    alt_id = 0
+        reads_bases_matrix.append(['' for base_id in range(bases_num)])
+    base_id = 0
     for pileupcolumn in opened_bam.pileup():
         if pileupcolumn.pos in positions_list:
             for pileupread in pileupcolumn.pileups:
                 read_index = reads_id_list.index(
                     pileupread.alignment.query_name)
                 if pileupread.is_del:
-                    reads_bases_matrix[read_index][alt_id] = '-'
+                    reads_bases_matrix[read_index][base_id] = '-'
                 else:
-                    reads_bases_matrix[read_index][alt_id] = (
+                    reads_bases_matrix[read_index][base_id] = (
                         pileupread.alignment.query_sequence[
                             pileupread.query_position])
-            alt_id += 1
+            base_id += 1
     opened_bam.close()
-    rm_reads_id_list = []
-    for read_id, read_bases_matrix in zip(reads_id_list, reads_bases_matrix):
-        if all([base == '' for base in read_bases_matrix]):
-            rm_reads_id_list.append(read_id)
-    for read_id in rm_reads_id_list:
-        del reads_bases_matrix[reads_id_list.index(read_id)]
-        reads_id_list.remove(read_id)
     return reads_id_list, reads_bases_matrix
+
+
+def remove_blank(reads_id_list: list, reads_bases_matrix: list) -> tuple:
+    """Remove blank reads from reads_bases_matrix.
+
+    Args:
+        reads_id_list (list): extracted read_id list for each read.
+        read_base_matrix (list): extracted bases matrix for each read.
+
+    Returns:
+        new_reads_id_list (list): blank-removed read_id list for each read.
+        new_reads_bases_matrix (list): blank-removed bases matrix
+                                       for each read.
+    """
+    new_reads_id_list, new_reads_bases_matrix = [], []
+    for read_id, read_bases_matrix in zip(reads_id_list, reads_bases_matrix):
+        if not all([base == '' for base in read_bases_matrix]):
+            new_reads_id_list.append(read_id)
+            new_reads_bases_matrix.append(read_bases_matrix)
+    return new_reads_id_list, new_reads_bases_matrix
 
 
 def check_flag(read: pysam.AlignedSegment, flag: int) -> bool:
