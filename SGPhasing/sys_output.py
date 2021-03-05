@@ -18,21 +18,15 @@ Classes:
   - Output
 """
 
-from platform import system
-
 from rich import print as rprint
 
 
-class Output():
-    """Format and display output.
-
-    Attributes:
-        term_support_color: Term support color.
-    """
+class Output(object):
+    """Format and display output."""
 
     def __init__(self) -> None:
         """Initialize Output."""
-        self.term_support_color = system() in ('Linux', 'Darwin')
+        super().__init__()
 
     @staticmethod
     def __indent_text_block(text: str) -> str:
@@ -49,24 +43,18 @@ class Output():
     def info(self, text: str) -> None:
         """Format INFO text."""
         if text:
-            trm = 'INFO    '
-            if self.term_support_color:
-                trm = (':information_source: ' +
-                       '[bright_green]INFO[/bright_green]    ')
+            trm = (':information_source: ' +
+                   '[bright_green]INFO[/bright_green]    ')
             rprint(trm + self.__indent_text_block(text))
 
     def warning(self, text: str) -> None:
         """Format WARNING text."""
         if text:
-            trm = 'WARNING '
-            if self.term_support_color:
-                trm = ':warning: [bright_yellow]WARNING[/bright_yellow] '
+            trm = ':warning: [bright_yellow]WARNING[/bright_yellow] '
             rprint(trm + self.__indent_text_block(text))
 
     def error(self, text: str) -> None:
         """Format ERROR text."""
         if text:
-            trm = 'ERROR   '
-            if self.term_support_color:
-                trm = ':no_entry: [bright_red]ERROR[/bright_red]   '
+            trm = ':no_entry: [bright_red]ERROR[/bright_red]   '
             rprint(trm + self.__indent_text_block(text))
