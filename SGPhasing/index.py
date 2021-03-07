@@ -58,6 +58,7 @@ class Index(object):
             f'Initializing {self.__class__.__name__}: (args: {arguments}')
         logger.debug(
             f'Initializing {self.__class__.__name__}: (args: {arguments}')
+        super().__init__()
 
     def prepare(self) -> None:
         """Check genome index."""
@@ -101,8 +102,9 @@ class Index(object):
             write_xam.write_partial_sam(
                 self.opened_xam, str(self.primary_sam_path),
                 self.limit_region_dict, self.multimapped_reads_set))
-        del self.multimapped_reads_set
+        del self.limit_region_dict, self.multimapped_reads_set
         collect()
+        self.opened_xam.close()
 
         self.opened_fastx, self.fastx_format = read_fastx.open_fastx(
             self.args.fastx)
@@ -111,6 +113,8 @@ class Index(object):
         write_fastx.write_partial_fastx(
             self.opened_fastx, self.primary_fastx_path.open('w'),
             self.fastx_format, self.primary_reads_set)
+        del self.primary_reads_set
+        collect()
         self.opened_fastx.close()
 
     def collapse_primary_sam(self) -> None:
@@ -134,6 +138,9 @@ class Index(object):
                                 'primary_reference.most.gff').open('w')
         write_gff.write_partial_gff(
             self.primary_gff, self.opened_most_gff, self.most_iso_id_list)
+        del self.most_iso_id_list
+        collect()
+        self.opened_most_gff.close()
         self.primary_fasta_path = (self.tmp_floder_path /
                                    'primary_reference.most.fasta')
         self.output.info('Running cufflinks gffread')
@@ -175,12 +182,15 @@ class Index(object):
         self.opened_primary_gff.close()
         self.opened_primary_gff = self.primary_gff_path.open('r')
         self.gene_linked_region = read_gff.read_gff(self.opened_primary_gff)
+        self.opened_primary_gff.close()
         self.link_id_list, self.linked_region_list = [], []
         for link_id, gene_id in enumerate(self.gene_linked_region.keys()):
             full_link_id = 'sgp_region' + str(link_id)
             self.link_id_list.append(full_link_id)
             self.gene_linked_region[gene_id].update_info_id(full_link_id)
             self.linked_region_list.append(self.gene_linked_region[gene_id])
+        del self.gene_linked_region
+        collect()
 
     def process_links(self) -> None:
         """Using multiply threads process each linked region."""
@@ -196,8 +206,11 @@ class Index(object):
                 link_id, linked_region, self.tmp_floder_path,
                 self.args.reference, self.args.input,
                 self.args.fastx, in_pool_threads))
+        del self.linked_region_list
+        collect()
         with Pool(processes=out_pool_threads) as pool:
-            pool.map(process_each_link, process_link_args)
+            self.region_id_main_dict_list = pool.map(
+                process_each_link, process_link_args)
 
     def process(self) -> None:
         """Call the index object."""
@@ -211,5 +224,6 @@ class Index(object):
         self.get_most_supported_fasta()
         self.get_link_region()
         self.process_links()
+        self.opened_log_file.close()
         self.output.info('Completed index Process')
         logger.debug('Completed index Process')
