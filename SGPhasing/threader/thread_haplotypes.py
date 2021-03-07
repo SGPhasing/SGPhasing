@@ -99,11 +99,12 @@ def onehot_encoder(reads_bases_matrix: list, padding: bool = False) -> tuple:
     return reads_bases_indexes, reads_bases_array
 
 
-def onehot_decoder(prototypes_array: list) -> list:
+def onehot_decoder(prototypes_array: list, if_base: bool = True) -> list:
     """Convert one-hot array to prototypes bases matrix.
 
     Args:
         prototypes_array (list): prototype array for each cluster.
+        if_base (bool): if return bases matrix or indexes matrix, default True.
 
     Returns:
         prototypes_bases_matrix (list): bases matrix for each cluster.
@@ -116,8 +117,13 @@ def onehot_decoder(prototypes_array: list) -> list:
         4: '-'}
     prototypes_bases_matrix = []
     for prototype_array in prototypes_array:
-        prototypes_bases_matrix.append(
-            [ONE_HOT[np.argmax(base_array)] for base_array in prototype_array])
+        if if_onehot:
+            prototypes_bases_matrix.append([
+                ONE_HOT[np.argmax(base_array)]
+                for base_array in prototype_array])
+        else:
+            prototypes_bases_matrix.append([
+                np.argmax(base_array) for base_array in prototype_array])
     return prototypes_bases_matrix
 
 
