@@ -31,4 +31,3 @@ def write_partial_gff(input_gff: str,
             iso_id = eachline.strip().split()[11][1:-2]
             if iso_id in iso_id_list:
                 opened_output_gff.write(eachline)
-    opened_output_gff.close()
