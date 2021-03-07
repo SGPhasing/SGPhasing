@@ -114,6 +114,22 @@ class Region(object):
             self.child_list[child_id].info = update_info_str_id(
                 each_child.info, new_id)
 
+    def get_info_id(self) -> str:
+        """Get region id from information string.
+
+        Returns:
+            (str): region id string.
+        """
+        return get_info_dict(self.info).get('Parent', '')
+
+    def get_main_dict(self) -> dict:
+        """Get main information dict from Region.
+
+        Returns:
+            (dict): region id as key and [chr, start, end] as value.
+        """
+        return {self.get_info_id(): [self.chrom, self.start, self.end]}
+
     def to_gff_string(self) -> str:
         """Convert this region to gff3 string.
 
@@ -284,6 +300,23 @@ def coverage_two_regions(Region1: Region, Region2: Region) -> float:
         return 0
 
 
+def get_info_dict(anno_info: str) -> dict:
+    """Get information from gff3 9th column.
+
+    Args:
+        anno_info (str): gff3 9th column string.
+
+    Returns:
+        info_dict (dict): gff3 9th column information dictionary.
+    """
+    info_dict = {}
+    info_sp = anno_info.split(';')
+    for each_info in info_sp:
+        each_info_sp = each_info.split('=')
+        info_dict.update({each_info_sp[0]: each_info_sp[1]})
+    return info_dict
+
+
 def update_info_str_id(info_str: str, new_id: str) -> str:
     """Update information id.
 
@@ -294,11 +327,7 @@ def update_info_str_id(info_str: str, new_id: str) -> str:
     Returns:
         (str): updated information string.
     """
-    info_dict = {}
-    info_sp = info_str.split(';')
-    for each_info in info_sp:
-        each_info_sp = each_info.split('=')
-        info_dict.update({each_info_sp[0]: each_info_sp[1]})
+    info_dict = get_info_dict(info_str)
     new_name = new_id + '.' + info_dict.get('Name', '').split('.')[-1]
     info_dict.update({'ID': new_name, 'Name': new_name, 'Parent': new_id})
     return ';'.join(
