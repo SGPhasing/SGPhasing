@@ -60,13 +60,12 @@ class Environment(object):
         self.conda_required_packages = [('bcbio-gff', 'bioconda'),
                                         ('cdna_cupcake', 'bioconda'),
                                         ('gatk4', 'bioconda'),
+                                        ('h5py', 'conda-forge'),
                                         ('mappy', 'bioconda'),
                                         ('minimap2', 'bioconda'),
                                         ('numpy',),
-                                        ('pandas',),
                                         ('pysam', 'bioconda'),
-                                        ('rich', 'conda-forge'),
-                                        ('vaex', 'conda-forge')]
+                                        ('rich', 'conda-forge')]
         self.missing_packages = []
         self.conda_missing_packages = []
 

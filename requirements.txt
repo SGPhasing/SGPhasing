@@ -1,10 +1,9 @@
 bcbio-gff
 cdna_cupcake
 gatk4
+h5py
 mappy
 minimap2
 numpy
-pandas
 pysam
 rich
-vaex
