@@ -19,10 +19,11 @@ from SGPhasing.processor.gatk4 import haplotype_caller
 from SGPhasing.processor.gff_to_fasta import gff_to_fasta
 from SGPhasing.processor.region_to_bam import fastx_to_bam, region_to_bam
 from SGPhasing.reader import read_fastx, read_vcf
+from SGPhasing.threader.thread_haplotypes import onehot_decoder
 from SGPhasing.threader.thread_haplotypes import thread_haplotypes
 
 
-def process_each_link(args_tuple: tuple) -> None:
+def process_each_link(args_tuple: tuple) -> dict:
     """Process each linked region.
 
     Args:
@@ -33,6 +34,10 @@ def process_each_link(args_tuple: tuple) -> None:
         index_xam (str): input high quality bam/cram file for indexing.
         index_fastx (str): input high quality fasta/q file for indexing.
         threads (int): threads using for minimap2, pysam and gatk4, default 1.
+
+    Returns:
+        link_reads_id_main_dict (dict): region id as key and
+                                        [chr, start, end, matrix] as value.
     """
     (link_id, linked_region, tmp_dir,
      reference, index_xam, index_fastx, threads) = args_tuple
@@ -87,10 +92,10 @@ def process_each_link(args_tuple: tuple) -> None:
     positions_list = read_vcf.get_alt_positions(
         str(index_expand_vcf_path), ploidy)
     if positions_list:
-        link_reads_bases_matrix = bam_to_matrix(
+        link_reads_id_list, link_reads_bases_matrix = bam_to_matrix(
             'reference', link_floder_path,
             positions_list, link_expand_lalign_bam)
-        index_reads_bases_matrix = bam_to_matrix(
+        index_reads_id_list, index_reads_bases_matrix = bam_to_matrix(
             'index', link_floder_path,
             positions_list, index_expand_lalign_bam)
 
@@ -98,5 +103,17 @@ def process_each_link(args_tuple: tuple) -> None:
          new_prototypes_array) = thread_haplotypes(
             link_reads_bases_matrix, index_reads_bases_matrix,
             len(positions_list))
+
+        link_reads_id_main_dict = {}
+        link_reads_id_main_dict.update(
+            linked_region.Primary_Region.get_main_dict())
+        for region in linked_region.Secondary_Regions_list:
+            link_reads_id_main_dict.update(region.get_main_dict())
+
+        for read_id, prototype_bases_matrix in zip(
+                link_reads_id_list,
+                onehot_decoder(new_prototypes_array, False)):
+            link_reads_id_main_dict[read_id].append(prototype_bases_matrix)
+        return link_reads_id_main_dict
     else:
-        return None
+        return {}
