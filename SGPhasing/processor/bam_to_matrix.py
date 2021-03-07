@@ -22,7 +22,7 @@ from SGPhasing.writer import write_tsv
 def bam_to_matrix(input_type: str,
                   link_floder_path: Path,
                   positions_list: list,
-                  expand_lalign_bam: str) -> list:
+                  expand_lalign_bam: str) -> tuple:
     """Extract reads base matrix and write into tsv.
 
     Args:
@@ -34,6 +34,7 @@ def bam_to_matrix(input_type: str,
                                  left aligned bam path string.
 
     Returns:
+        reads_id_list (list): extracted reads id in list.
         reads_bases_matrix (list): extracted bases matrix for each read.
     """
     reads_id_list, reads_bases_matrix = (
@@ -46,4 +47,4 @@ def bam_to_matrix(input_type: str,
     write_tsv.write_reads_bases_matrix(
         str(reads_bases_matrix_path), positions_list,
         reads_id_list, reads_bases_matrix)
-    return reads_bases_matrix
+    return reads_id_list, reads_bases_matrix
