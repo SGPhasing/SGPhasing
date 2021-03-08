@@ -20,7 +20,8 @@ from pathlib import Path
 from SGPhasing.processor.gatk4 import add_or_replace_read_groups
 from SGPhasing.processor.gatk4 import left_align_indels
 from SGPhasing.processor.minimap2 import genomic_mapper
-from SGPhasing.reader import read_fastx, read_xam
+from SGPhasing.reader.read_fastx import open_fastx
+from SGPhasing.reader.read_xam import open_xam
 from SGPhasing.Regions import Linked_Region
 from SGPhasing.writer import write_fastx, write_xam
 
@@ -56,7 +57,7 @@ def region_to_bam(input_type: str,
         reads_num (int): extracted reads number.
     """
     link_reads_set = set()
-    opened_input_xam, input_xam_format = read_xam.open_xam(input_xam)
+    opened_input_xam, input_xam_format = open_xam(input_xam)
     for read in opened_input_xam.fetch(linked_region.Primary_Region.chrom,
                                        linked_region.Primary_Region.start,
                                        linked_region.Primary_Region.end):
@@ -67,7 +68,7 @@ def region_to_bam(input_type: str,
             link_reads_set.add(read.query_name)
     opened_input_xam.close()
 
-    opened_input_fastx, input_fastx_format = read_fastx.open_fastx(input_fastx)
+    opened_input_fastx, input_fastx_format = open_fastx(input_fastx)
     input_fastx_path = (
         link_floder_path /
         (f'linked_region.{input_type}.' + input_fastx_format))

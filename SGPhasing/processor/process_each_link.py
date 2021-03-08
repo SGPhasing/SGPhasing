@@ -18,7 +18,8 @@ from SGPhasing.processor.gatk4 import create_sequence_dictionary
 from SGPhasing.processor.gatk4 import haplotype_caller
 from SGPhasing.processor.gff_to_fasta import gff_to_fasta
 from SGPhasing.processor.region_to_bam import fastx_to_bam, region_to_bam
-from SGPhasing.reader import read_fastx, read_vcf
+from SGPhasing.reader.read_fastx import faidx
+from SGPhasing.reader.read_vcf import get_alt_positions
 from SGPhasing.threader.thread_haplotypes import onehot_decoder
 from SGPhasing.threader.thread_haplotypes import thread_haplotypes
 
@@ -69,7 +70,7 @@ def process_each_link(args_tuple: tuple) -> dict:
         opened_expand_gff.name, reference, str(expand_fasta_path)))
     opened_gffread_log.close()
 
-    read_fastx.faidx(str(expand_fasta_path))
+    faidx(str(expand_fasta_path))
     opened_gatk4_log.write(create_sequence_dictionary(str(expand_fasta_path)))
 
     link_expand_lalign_bam = fastx_to_bam(
@@ -89,8 +90,7 @@ def process_each_link(args_tuple: tuple) -> dict:
         str(expand_fasta_path), reads_num, 20, ploidy, threads))
     opened_gatk4_log.close()
 
-    positions_list = read_vcf.get_alt_positions(
-        str(index_expand_vcf_path), ploidy)
+    positions_list = get_alt_positions(str(index_expand_vcf_path), ploidy)
     if positions_list:
         link_reads_id_list, link_reads_bases_matrix = bam_to_matrix(
             'reference', link_floder_path,

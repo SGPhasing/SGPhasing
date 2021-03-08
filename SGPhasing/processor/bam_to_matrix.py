@@ -15,8 +15,8 @@ Functions:
 
 from pathlib import Path
 
-from SGPhasing.reader import read_xam
-from SGPhasing.writer import write_tsv
+from SGPhasing.reader.read_xam import extract_read_matrix, remove_blank
+from SGPhasing.writer.write_tsv import write_reads_bases_matrix
 
 
 def bam_to_matrix(input_type: str,
@@ -38,13 +38,13 @@ def bam_to_matrix(input_type: str,
         reads_bases_matrix (list): extracted bases matrix for each read.
     """
     reads_id_list, reads_bases_matrix = (
-        read_xam.extract_read_matrix(expand_lalign_bam, positions_list))
+        extract_read_matrix(expand_lalign_bam, positions_list))
     reads_bases_matrix_path = (
         link_floder_path / f'linked_region.{input_type}.reads_bases.tsv')
     if input_type != 'reference':
-        reads_id_list, reads_bases_matrix = read_xam.remove_blank(
+        reads_id_list, reads_bases_matrix = remove_blank(
             reads_id_list, reads_bases_matrix)
-    write_tsv.write_reads_bases_matrix(
+    write_reads_bases_matrix(
         str(reads_bases_matrix_path), positions_list,
         reads_id_list, reads_bases_matrix)
     return reads_id_list, reads_bases_matrix
