@@ -11,6 +11,7 @@
 
 Functions:
   - write_partial_fastx
+  - write_fasta
 """
 
 from io import TextIOWrapper
@@ -45,3 +46,17 @@ def write_partial_fastx(opened_input_fastx: TextIOWrapper,
         else:
             read_unit.append(eachline)
     opened_output_fastx.close()
+
+
+def write_fasta(opened_fasta: TextIOWrapper,
+                seq_id: str,
+                sequence: str) -> None:
+    """Write fasta file.
+
+    Args:
+        opened_fasta (TextIOWrapper): opened fasta file handle.
+        seq_id (str): sequence id string.
+        sequence (str): sequence string.
+    """
+    opened_fasta.write('>' + seq_id + '\n')
+    opened_fasta.write(sequence + '\n')
