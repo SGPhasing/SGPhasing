@@ -117,7 +117,7 @@ def onehot_decoder(prototypes_array: list, if_base: bool = True) -> list:
         4: '-'}
     prototypes_bases_matrix = []
     for prototype_array in prototypes_array:
-        if if_onehot:
+        if if_base:
             prototypes_bases_matrix.append([
                 ONE_HOT[np.argmax(base_array)]
                 for base_array in prototype_array])
