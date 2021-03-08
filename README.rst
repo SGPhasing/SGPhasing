@@ -33,7 +33,7 @@ Installation
 
     git clone https://github.com/SGPhasing/SGPhasing.git
     cd SGPhasing
-    conda create -n sgphasing -y --no-default-packages python=3.8
+    conda create -n sgphasing -y python=3.8
     python setup.py install
 
 or
@@ -49,7 +49,7 @@ or
 .. code-block:: shell
 
     git clone https://github.com/SGPhasing/SGPhasing.git
-    conda create -n sgphasing -y --no-default-packages python=3.8 bcbio-gff cdna_cupcake gatk4 mappy minimap2 numpy pysam rich
+    conda create -n sgphasing -y python=3.8 bcbio-gff cdna_cupcake gatk4 h5py mappy minimap2 numpy pysam rich
 
 Running the tests
 ~~~~~~~~~~~~~~~~~
@@ -76,4 +76,4 @@ Changelog
 
 .. |version| image:: https://img.shields.io/badge/version-v0.0.1a-green.svg
 
-.. |update| image:: https://img.shields.io/badge/last%20updated-02%20Mar%202021-orange.svg
+.. |update| image:: https://img.shields.io/badge/last%20updated-08%20Mar%202021-orange.svg
