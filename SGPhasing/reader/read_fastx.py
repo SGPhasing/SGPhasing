@@ -11,7 +11,9 @@
 
 Functions:
   - open_fastx
+  - get_seq_dict
   - check_index
+  - faidx
 """
 
 import gzip
@@ -52,6 +54,37 @@ def open_fastx(input_fastx: str) -> tuple:
                      'fastq, fasta, fq, fa, or gzipped file.')
         exit()
     return opened_fastx, input_format
+
+
+def get_seq_dict(input_fastx: str) -> dict:
+    """Get sequences dict from fasta/q file.
+
+    Args:
+        input_fastx (str): input fasta/q file path string.
+
+    Returns:
+        id_seq_dict (dict): id as key and sequence as value.
+    """
+    id_seq_dict = {}
+    opened_fastx, input_format = open_fastx(input_fastx)
+    seq_id, sequence, seq_line = '', '', True
+    if input_format == 'fasta':
+        identifier = '>'
+    else:
+        identifier = '@'
+    for eachline in opened_fastx:
+        if eachline[0] == identifier:
+            if seq_id:
+                id_seq_dict.update({seq_id: sequence})
+            seq_id = eachline.strip().split()[0][1:]
+            sequence = ''
+            seq_line = True
+        elif eachline[0] == '+':
+            seq_line = False
+        elif seq_line:
+            sequence += eachline.strip()
+    id_seq_dict.update({seq_id: sequence})
+    return id_seq_dict
 
 
 def check_index(reference: str, threads: int = 1) -> None:
