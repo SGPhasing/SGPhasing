@@ -29,8 +29,13 @@ from SGPhasing.processor.gff_to_fasta import gff_to_fasta
 from SGPhasing.processor.minimap2 import splice_mapper
 from SGPhasing.processor.process_each_link import process_each_link
 from SGPhasing.processor.sam_to_gff import sam_to_gff
-from SGPhasing.reader import read_bed, read_fastx, read_gff, read_xam
-from SGPhasing.writer import write_fastx, write_gff, write_xam
+from SGPhasing.reader import read_fastx, read_xam
+from SGPhasing.reader.read_bed import open_bed
+from SGPhasing.reader.read_gff import read_gff
+from SGPhasing.writer.write_fastx import write_partial_fastx
+from SGPhasing.writer.write_gff import write_partial_gff
+from SGPhasing.writer.write_index import write_index
+from SGPhasing.writer.write_xam import write_partial_sam
 from SGPhasing.sys_output import Output
 
 logger = getLogger(__name__)  # pylint: disable=invalid-name
@@ -74,7 +79,7 @@ class Index(object):
     def check_bed(self) -> None:
         """Check input limitation bed file."""
         if self.args.bed:
-            self.limit_region_dict = read_bed.open_bed(self.args.bed)
+            self.limit_region_dict = open_bed(self.args.bed)
         else:
             self.limit_region_dict = {}
 
@@ -99,7 +104,7 @@ class Index(object):
         """Get primary region from multiply mapped reads."""
         self.primary_sam_path = self.tmp_floder_path / 'primary_reference.sam'
         self.primary_region, self.primary_reads_set = (
-            write_xam.write_partial_sam(
+            write_partial_sam(
                 self.opened_xam, str(self.primary_sam_path),
                 self.limit_region_dict, self.multimapped_reads_set))
         del self.limit_region_dict, self.multimapped_reads_set
@@ -110,7 +115,7 @@ class Index(object):
             self.args.fastx)
         self.primary_fastx_path = (self.tmp_floder_path /
                                    ('primary.' + self.fastx_format))
-        write_fastx.write_partial_fastx(
+        write_partial_fastx(
             self.opened_fastx, self.primary_fastx_path.open('w'),
             self.fastx_format, self.primary_reads_set)
         del self.primary_reads_set
@@ -136,7 +141,7 @@ class Index(object):
         """Get most supported isoforms gff."""
         self.opened_most_gff = (self.tmp_floder_path /
                                 'primary_reference.most.gff').open('w')
-        write_gff.write_partial_gff(
+        write_partial_gff(
             self.primary_gff, self.opened_most_gff, self.most_iso_id_list)
         del self.most_iso_id_list
         collect()
@@ -181,7 +186,7 @@ class Index(object):
             sys.stdout = sys.__stdout__
         self.opened_primary_gff.close()
         self.opened_primary_gff = self.primary_gff_path.open('r')
-        self.gene_linked_region = read_gff.read_gff(self.opened_primary_gff)
+        self.gene_linked_region = read_gff(self.opened_primary_gff)
         self.opened_primary_gff.close()
         self.link_id_list, self.linked_region_list = [], []
         for link_id, gene_id in enumerate(self.gene_linked_region.keys()):
@@ -212,8 +217,15 @@ class Index(object):
             self.region_id_main_dict_list = pool.map(
                 process_each_link, process_link_args)
 
+    def write_sgp_index(self) -> None:
+        """Write SGPhasing index."""
+        self.output.info(
+            f'Writing index into {self.args.input}.sgp')
+        write_index(self.args.input+'.sgp', self.link_id_list,
+                    self.region_id_main_dict_list, self.tmp_floder_path)
+
     def process(self) -> None:
-        """Call the index object."""
+        """Call the Index object."""
         self.output.info('Starting index Process')
         logger.debug('Starting index Process')
         self.prepare()
@@ -224,6 +236,7 @@ class Index(object):
         self.get_most_supported_fasta()
         self.get_link_region()
         self.process_links()
+        self.write_sgp_index()
         self.opened_log_file.close()
         self.output.info('Completed index Process')
         logger.debug('Completed index Process')
