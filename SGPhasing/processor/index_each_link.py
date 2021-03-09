@@ -7,10 +7,10 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.processor process each linked region.
+"""SGPhasing.processor index each linked region.
 
 Functions:
-  - process_each_link
+  - index_each_link
 """
 
 from SGPhasing.processor.bam_to_matrix import bam_to_matrix
@@ -24,8 +24,8 @@ from SGPhasing.threader.thread_haplotypes import onehot_decoder
 from SGPhasing.threader.thread_haplotypes import thread_haplotypes
 
 
-def process_each_link(args_tuple: tuple) -> dict:
-    """Process each linked region.
+def index_each_link(args_tuple: tuple) -> tuple:
+    """Index each linked region.
 
     Args:
         link_id (str): linked_region id.
@@ -39,6 +39,7 @@ def process_each_link(args_tuple: tuple) -> dict:
     Returns:
         link_reads_id_main_dict (dict): region id as key and
                                         [chr, start, end, matrix] as value.
+        positions_list (list): position list for each base.
     """
     (link_id, linked_region, tmp_dir,
      reference, index_xam, index_fastx, threads) = args_tuple
@@ -52,20 +53,17 @@ def process_each_link(args_tuple: tuple) -> dict:
     link_gff_path = (
         link_floder_path / 'linked_region.minimap2_reference.gff3')
     linked_region.write_gff(str(link_gff_path))
-    link_fasta_path = (
-        link_floder_path / 'linked_region.reference.fasta')
+    link_fasta_path = link_floder_path / 'linked_region.reference.fasta'
     opened_gffread_log.write(gff_to_fasta(
         str(link_gff_path), reference, str(link_fasta_path)))
 
     expanded_primary_region = linked_region.extend_primary()
     expanded_primary_region.update_info_id(link_id)
     opened_expand_gff = (
-        link_floder_path /
-        'expanded_primary.minimap2_reference.gff3').open('w')
+        link_floder_path/'expanded_primary.minimap2_reference.gff3').open('w')
     expanded_primary_region.write_gff(opened_expand_gff)
     opened_expand_gff.close()
-    expand_fasta_path = (
-        link_floder_path / 'expanded_primary.reference.fasta')
+    expand_fasta_path = link_floder_path / 'expanded_primary.reference.fasta'
     opened_gffread_log.write(gff_to_fasta(
         opened_expand_gff.name, reference, str(expand_fasta_path)))
     opened_gffread_log.close()
@@ -114,6 +112,6 @@ def process_each_link(args_tuple: tuple) -> dict:
                 link_reads_id_list,
                 onehot_decoder(new_prototypes_array, False)):
             link_reads_id_main_dict[read_id].append(prototype_bases_matrix)
-        return link_reads_id_main_dict
+        return link_reads_id_main_dict, positions_list
     else:
-        return {}
+        return {}, []
