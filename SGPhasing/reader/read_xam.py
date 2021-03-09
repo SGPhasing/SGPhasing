@@ -7,7 +7,7 @@
 # or the "GNU General Public License v3.0".
 # Please see the LICENSE file that should
 # have been included as part of this package.
-"""SGPhasing.reader read sam, bam or cram file.
+"""SGPhasing.reader read bam, cram or sam file.
 
 Functions:
   - open_xam
@@ -32,7 +32,7 @@ def open_xam(input_xam: str) -> tuple:
         input_xam (str): input sam or bam file path string.
 
     Returns:
-        xamfile (AlignmentFile): pysam opened cram/bam/sam file handle.
+        xamfile (AlignmentFile): pysam opened bam/cram/sam file handle.
         input_format (str): return input_xam format, sam or bam.
     """
     if input_xam.endswith('cram'):
@@ -47,7 +47,7 @@ def open_xam(input_xam: str) -> tuple:
     else:
         output = Output()
         output.error('Input error: input format must be'
-                     ' cram, bam or sam file.')
+                     ' bam, cram or sam file.')
         exit()
     return xamfile, input_format
 
@@ -81,7 +81,7 @@ def check_index(input_xam: str, threads: int = 1) -> str:
             return input_bam
         else:
             output.error('Input error: input format must be'
-                         ' cram, bam or sam file.')
+                         ' bam, cram or sam file.')
             exit()
 
 
