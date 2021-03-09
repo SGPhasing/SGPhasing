@@ -26,8 +26,8 @@ import sys
 
 from SGPhasing.processor.collapse import collapse_isoforms_by_sam
 from SGPhasing.processor.gff_to_fasta import gff_to_fasta
+from SGPhasing.processor.index_each_link import index_each_link
 from SGPhasing.processor.minimap2 import splice_mapper
-from SGPhasing.processor.process_each_link import process_each_link
 from SGPhasing.processor.sam_to_gff import sam_to_gff
 from SGPhasing.reader import read_fastx, read_xam
 from SGPhasing.reader.read_bed import open_bed
@@ -198,7 +198,7 @@ class Index(object):
         collect()
 
     def process_links(self) -> None:
-        """Using multiply threads process each linked region."""
+        """Using multiply threads index each linked region."""
         in_pool_threads = int(self.args.threads / len(self.link_id_list))
         in_pool_threads = in_pool_threads if in_pool_threads else 1
         out_pool_threads = int(self.args.threads / in_pool_threads)
@@ -214,20 +214,22 @@ class Index(object):
         del self.linked_region_list
         collect()
         with Pool(processes=out_pool_threads) as pool:
-            self.region_id_main_dict_list = pool.map(
-                process_each_link, process_link_args)
+            self.process_link_returns = pool.map(
+                index_each_link, process_link_args)
+        del process_link_args
+        collect()
 
     def write_sgp_index(self) -> None:
         """Write SGPhasing index."""
         self.output.info(
             f'Writing index into {self.args.input}.sgp')
         write_index(self.args.input+'.sgp', self.link_id_list,
-                    self.region_id_main_dict_list, self.tmp_floder_path)
+                    self.process_link_returns, self.tmp_floder_path)
 
     def process(self) -> None:
         """Call the Index object."""
-        self.output.info('Starting index Process')
-        logger.debug('Starting index Process')
+        self.output.info('Starting Index Process')
+        logger.debug('Starting Index Process')
         self.prepare()
         self.check_bed()
         self.get_multimapped_reads()
@@ -238,5 +240,5 @@ class Index(object):
         self.process_links()
         self.write_sgp_index()
         self.opened_log_file.close()
-        self.output.info('Completed index Process')
-        logger.debug('Completed index Process')
+        self.output.info('Completed Index Process')
+        logger.debug('Completed Index Process')
